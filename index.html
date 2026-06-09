@@ -3,77 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Chapter Journey Timeline</title>
+  <title>Parth Mohata - Student Chapter Journey Map</title>
   <style>
     :root {
-      --color-video: #1e88e5;
-      --color-quiz: #fb8c00;
-      --color-cct: #43a047;
-      --color-test: #e53935;
-      --bg-card: #ffffff;
-      --text-main: #1f2937;
+      --color-video: #2563eb;
+      --color-quiz: #ea580c;
+      --color-cct: #16a34a;
+      --color-test: #dc2626;
+      --bg-canvas: #fafafa;
+      --track-border: #e5e7eb;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-canvas);
       margin: 0;
-      padding: 40px 20px;
+      padding: 60px 20px;
+      color: #1f2937;
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      justify-content: center;
     }
 
-    .timeline-container {
+    .infographic-card {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1100px;
       background: #ffffff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 20px 40px -12px rgba(0,0,0,0.03);
     }
 
-    .timeline-header {
+    .info-header {
+      border-bottom: 1px solid #f3f4f6;
+      padding-bottom: 24px;
       margin-bottom: 40px;
     }
 
-    .timeline-header h2 {
-      margin: 0 0 8px 0;
-      color: var(--text-main);
-      font-size: 1.5rem;
+    .info-header h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin: 0 0 6px 0;
+      color: #111827;
     }
 
-    .timeline-header p {
+    .info-header p {
       margin: 0;
       color: #6b7280;
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
 
-    /* Horizontal Track System */
-    .timeline-track {
+    /* Horizontal Flow Matrix */
+    .flow-matrix {
       position: relative;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 100px 0; /* Generous spacing for absolute cards */
-      margin-top: 20px;
+      padding: 120px 0;
+      margin: 40px 0;
     }
 
-    /* The main horizontal spine line */
-    .timeline-track::before {
+    /* Central Spine Track Line */
+    .flow-matrix::before {
       content: '';
       position: absolute;
       left: 0;
       right: 0;
       top: 50%;
-      height: 4px;
-      background: #e5e7eb;
+      height: 2px;
+      background: linear-gradient(90deg, #e5e7eb 0%, #cbd5e1 50%, #e5e7eb 100%);
       transform: translateY(-50%);
-      zorder: 1;
+      z-index: 1;
     }
 
-    /* Timeline Node Element */
-    .timeline-node {
+    /* Minimal Floating Node */
+    .journey-node {
       position: relative;
       z-index: 2;
       display: flex;
@@ -81,110 +85,140 @@
       align-items: center;
     }
 
-    /* Icon Circle Styling */
-    .icon-wrapper {
-      width: 44px;
-      height: 44px;
+    /* Data Bubbles - Size scales by importance weight (Information is Beautiful Style) */
+    .bubble {
       border-radius: 50%;
-      background: white;
-      border: 3px solid var(--node-color);
+      background: #ffffff;
+      border: 2px solid var(--theme-color);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 1.2rem;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
 
-    /* Scaling the circle smoothly on interaction */
-    .icon-wrapper:hover {
+    /* Custom Data Sizes based on task weight */
+    .size-sm { width: 36px; height: 36px; font-size: 0.95rem; }
+    .size-md { width: 46px; height: 46px; font-size: 1.1rem; }
+    .size-lg { width: 58px; height: 58px; font-size: 1.3rem; }
+
+    /* Interactive Hover Transformations */
+    .journey-node:hover .bubble {
       transform: scale(1.15);
-      background: var(--node-color);
-      color: white !important;
+      background: var(--theme-color);
+      box-shadow: 0 12px 24px -6px var(--theme-color-alpha);
+    }
+    
+    .journey-node:hover .bubble span {
+      display: none; /* Hide icon code on hover to clear background */
     }
 
-    /* Popover Detail Card (Hidden by Default) */
-    .detail-card {
+    /* Tiny Persistent Label (Date Anchor) */
+    .date-anchor {
       position: absolute;
-      width: 200px;
-      background: var(--bg-card);
-      border-radius: 10px;
-      padding: 12px;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      border: 1px solid #e5e7eb;
-      border-top: 4px solid var(--node-color);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #9ca3af;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .node-up .date-anchor { bottom: -24px; }
+    .node-down .date-anchor { top: -24px; }
+
+    /* Interactive Data Card (Hidden by Default) */
+    .popover-card {
+      position: absolute;
+      width: 220px;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.12), 0 10px 20px -5px rgba(0,0,0,0.06);
+      border: 1px solid #f3f4f6;
       opacity: 0;
       visibility: hidden;
-      transform: translateX(-50%) translateY(10px);
-      transition: all 0.2s ease;
-      z-index: 10;
+      z-index: 20;
       left: 50%;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Alternate placing cards above and below the line to avoid overlaps */
-    .node-up .detail-card {
+    .node-up .popover-card {
       bottom: 55px;
-    }
-    .node-down .detail-card {
-      top: 55px;
+      transform: translate(-50%, 15px);
     }
 
-    /* Show on Hover Trigger */
-    .timeline-node:hover .detail-card {
+    .node-down .popover-card {
+      top: 55px;
+      transform: translate(-50%, -15px);
+    }
+
+    /* Active States via Hover */
+    .journey-node:hover .popover-card {
       opacity: 1;
       visibility: visible;
-      transform: translateX(-50%) translateY(0);
+      transform: translate(-50%, 0);
     }
 
-    /* Typography inside popup card */
-    .detail-card .date {
-      font-size: 0.75rem;
-      color: #9ca3af;
-      font-weight: 600;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .detail-card .title {
-      font-size: 0.85rem;
+    /* Popover Content Styling */
+    .popover-card .tag {
+      font-size: 0.7rem;
       font-weight: 700;
-      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--theme-color);
       margin-bottom: 6px;
-      line-height: 1.3;
     }
 
-    .detail-card .meta {
+    .popover-card .title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .popover-card .score-badge {
       font-size: 0.8rem;
-      color: #4b5563;
-      background: #f3f4f6;
-      padding: 4px 8px;
-      border-radius: 4px;
+      font-weight: 600;
+      background: #f8fafc;
+      padding: 6px 10px;
+      border-radius: 8px;
       display: inline-block;
+      color: #334155;
+      border: 1px solid #f1f5f9;
     }
 
-    /* Responsive Mobile Overrides */
-    @media (max-width: 768px) {
-      .timeline-track {
+    /* Responsive Mobile Cascade */
+    @media (max-width: 820px) {
+      .flow-matrix {
         flex-direction: column;
         align-items: flex-start;
-        padding: 20px 0 20px 30px;
+        padding: 20px 0 20px 20px;
       }
-      .timeline-track::before {
+      .flow-matrix::before {
         left: 20px;
         right: auto;
         top: 0;
         bottom: 0;
-        width: 4px;
+        width: 2px;
         height: 100%;
         transform: none;
       }
-      .timeline-node {
+      .journey-node {
         flex-direction: row;
-        margin: 25px 0;
+        margin: 30px 0;
         width: 100%;
       }
-      .detail-card {
+      .date-anchor {
+        position: relative;
+        top: auto !important;
+        bottom: auto !important;
+        margin-right: 16px;
+        width: 50px;
+        text-align: right;
+      }
+      .popover-card {
         position: relative;
         top: auto !important;
         bottom: auto !important;
@@ -192,91 +226,98 @@
         transform: none !important;
         opacity: 1;
         visibility: visible;
-        width: calc(100% - 60px);
+        width: calc(100% - 110px);
         box-shadow: none;
+        border: 1px solid #e5e7eb;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="timeline-container">
-    <div class="timeline-header">
-      <h2>Parth Mohata &bull; Chapter Journey</h2>
-      <p>Physics &mdash; Mathematical Tools</p>
+  <div class="infographic-card">
+    <div class="info-header">
+      <h1>The Chapter Journey &bull; Parth Mohata</h1>
+      <p>Physics / Learning Footprint: Mathematical Tools</p>
     </div>
 
-    <div class="timeline-track">
+    <!-- Live Data Distribution Track -->
+    <div class="flow-matrix">
       
-      <div class="timeline-node node-up" style="--node-color: var(--color-cct);">
-        <div class="icon-wrapper" style="color: var(--color-cct);">🎯</div>
-        <div class="detail-card">
-          <div class="date">22 Apr 2025</div>
+      <!-- CCT 01 -->
+      <div class="journey-node node-up" style="--theme-color: var(--color-cct); --theme-color-alpha: rgba(22,163,74,0.25);">
+        <div class="date-anchor">22 Apr</div>
+        <div class="bubble size-sm" style="color: var(--color-cct);"><span>🎯</span></div>
+        <div class="popover-card">
+          <div class="tag">Concept Clarity</div>
           <div class="title">CCT 01: Trigonometry Basics</div>
-          <div class="meta">Score: 6/6 (100%)</div>
+          <div class="score-badge">Score: 6 / 6 (100%)</div>
         </div>
       </div>
 
-      <div class="timeline-node node-down" style="--node-color: var(--color-cct);">
-        <div class="icon-wrapper" style="color: var(--color-cct);">🎯</div>
-        <div class="detail-card">
-          <div class="date">22 Apr 2025</div>
+      <!-- CCT 02 -->
+      <div class="journey-node node-down" style="--theme-color: var(--color-cct); --theme-color-alpha: rgba(22,163,74,0.25);">
+        <div class="date-anchor">22 Apr</div>
+        <div class="bubble size-sm" style="color: var(--color-cct);"><span>🎯</span></div>
+        <div class="popover-card">
+          <div class="tag">Concept Clarity</div>
           <div class="title">CCT 02: Coordinate Geometry</div>
-          <div class="meta">Score: 6/6 (100%)</div>
+          <div class="score-badge">Score: 6 / 6 (100%)</div>
         </div>
       </div>
 
-      <div class="timeline-node node-up" style="--node-color: var(--color-video);">
-        <div class="icon-wrapper" style="color: var(--color-video);">🎥</div>
-        <div class="detail-card">
-          <div class="date">26 May 2025</div>
-          <div class="title">Video: Basic Calculus</div>
-          <div class="meta">Duration: 28 min</div>
+      <!-- Video Lecture -->
+      <div class="journey-node node-up" style="--theme-color: var(--color-video); --theme-color-alpha: rgba(37,99,235,0.25);">
+        <div class="date-anchor">26 May</div>
+        <div class="bubble size-md" style="color: var(--color-video);"><span>🎥</span></div>
+        <div class="popover-card">
+          <div class="tag">Video Lecture</div>
+          <div class="title">Basic Calculus Core Introduction</div>
+          <div class="score-badge">Duration: 28 min</div>
         </div>
       </div>
 
-      <div class="timeline-node node-down" style="--node-color: var(--color-quiz);">
-        <div class="icon-wrapper" style="color: var(--color-quiz);">📝</div>
-        <div class="detail-card">
-          <div class="date">26 May 2025</div>
-          <div class="title">Calculus Basics Quiz</div>
-          <div class="meta">Score: 8/11</div>
+      <!-- Video Quiz -->
+      <div class="journey-node node-down" style="--theme-color: var(--color-quiz); --theme-color-alpha: rgba(234,88,12,0.25);">
+        <div class="date-anchor">26 May</div>
+        <div class="bubble size-sm" style="color: var(--color-quiz);"><span>📝</span></div>
+        <div class="popover-card">
+          <div class="tag">Video Quiz</div>
+          <div class="title">Calculus Basics Assessment</div>
+          <div class="score-badge">Score: 8 / 11</div>
         </div>
       </div>
 
-      <div class="timeline-node node-up" style="--node-color: var(--color-video);">
-        <div class="icon-wrapper" style="color: var(--color-video);">🎥</div>
-        <div class="detail-card">
-          <div class="date">28 May 2025</div>
-          <div class="title">Video: Differentiation</div>
-          <div class="meta">Score: 38.75/52</div>
+      <!-- Quiz: Diff EoV -->
+      <div class="journey-node node-up" style="--theme-color: var(--color-quiz); --theme-color-alpha: rgba(234,88,12,0.25);">
+        <div class="date-anchor">28 May</div>
+        <div class="bubble size-md" style="color: var(--color-quiz);"><span>📝</span></div>
+        <div class="popover-card">
+          <div class="tag">Formative Quiz</div>
+          <div class="title">Differentiation End of Video Quiz</div>
+          <div class="score-badge">Score: 42 / 45</div>
         </div>
       </div>
 
-      <div class="timeline-node node-down" style="--node-color: var(--color-quiz);">
-        <div class="icon-wrapper" style="color: var(--color-quiz);">📝</div>
-        <div class="detail-card">
-          <div class="date">28 May 2025</div>
-          <div class="title">Differentiation EoV Quiz</div>
-          <div class="meta">Score: 42/45</div>
-        </div>
-      </div>
-
-      <div class="timeline-node node-up" style="--node-color: var(--color-cct);">
-        <div class="icon-wrapper" style="color: var(--color-cct);">🎯</div>
-        <div class="detail-card">
-          <div class="date">29 May 2025</div>
+      <!-- CCT 04 -->
+      <div class="journey-node node-down" style="--theme-color: var(--color-cct); --theme-color-alpha: rgba(22,163,74,0.25);">
+        <div class="date-anchor">29 May</div>
+        <div class="bubble size-md" style="color: var(--color-cct);"><span>🎯</span></div>
+        <div class="popover-card">
+          <div class="tag">Concept Clarity</div>
           <div class="title">CCT 04: Differentiation Basics</div>
-          <div class="meta" style="color: var(--color-test); background: #fef2f2;">Score: 9/24 (Critical)</div>
+          <div class="score-badge" style="background: #fef2f2; color: #b91c1c; border-color: #fee2e2;">Score: 9 / 24 (38%)</div>
         </div>
       </div>
 
-      <div class="timeline-node node-down" style="--node-color: var(--color-test);">
-        <div class="icon-wrapper" style="color: var(--color-test);">🏆</div>
-        <div class="detail-card">
-          <div class="date">17 Jul 2025</div>
-          <div class="title">Chapter Test: Level 1</div>
-          <div class="meta">Score: 37/52</div>
+      <!-- Chapter Test Level 1 -->
+      <div class="journey-node node-up" style="--theme-color: var(--color-test); --theme-color-alpha: rgba(220,38,38,0.25);">
+        <div class="date-anchor">17 Jul</div>
+        <div class="bubble size-lg" style="color: var(--color-test);"><span>🏆</span></div>
+        <div class="popover-card">
+          <div class="tag">Chapter Milestone</div>
+          <div class="title">Chapter Test - Level 1 Evaluation</div>
+          <div class="score-badge">Score: 37 / 52 (71.2%)</div>
         </div>
       </div>
 
