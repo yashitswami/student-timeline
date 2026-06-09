@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Chapter Journey Timeline</title>
+  <style>
+    :root {
+      --color-video: #1e88e5;
+      --color-quiz: #fb8c00;
+      --color-cct: #43a047;
+      --color-test: #e53935;
+      --bg-card: #ffffff;
+      --text-main: #1f2937;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .timeline-container {
+      width: 100%;
+      max-width: 1000px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    .timeline-header {
+      margin-bottom: 40px;
+    }
+
+    .timeline-header h2 {
+      margin: 0 0 8px 0;
+      color: var(--text-main);
+      font-size: 1.5rem;
+    }
+
+    .timeline-header p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 0.95rem;
+    }
+
+    /* Horizontal Track System */
+    .timeline-track {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 100px 0; /* Generous spacing for absolute cards */
+      margin-top: 20px;
+    }
+
+    /* The main horizontal spine line */
+    .timeline-track::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 4px;
+      background: #e5e7eb;
+      transform: translateY(-50%);
+      zorder: 1;
+    }
+
+    /* Timeline Node Element */
+    .timeline-node {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Icon Circle Styling */
+    .icon-wrapper {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid var(--node-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Scaling the circle smoothly on interaction */
+    .icon-wrapper:hover {
+      transform: scale(1.15);
+      background: var(--node-color);
+      color: white !important;
+    }
+
+    /* Popover Detail Card (Hidden by Default) */
+    .detail-card {
+      position: absolute;
+      width: 200px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e5e7eb;
+      border-top: 4px solid var(--node-color);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-50%) translateY(10px);
+      transition: all 0.2s ease;
+      z-index: 10;
+      left: 50%;
+    }
+
+    /* Alternate placing cards above and below the line to avoid overlaps */
+    .node-up .detail-card {
+      bottom: 55px;
+    }
+    .node-down .detail-card {
+      top: 55px;
+    }
+
+    /* Show on Hover Trigger */
+    .timeline-node:hover .detail-card {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Typography inside popup card */
+    .detail-card .date {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .detail-card .title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .detail-card .meta {
+      font-size: 0.8rem;
+      color: #4b5563;
+      background: #f3f4f6;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* Responsive Mobile Overrides */
+    @media (max-width: 768px) {
+      .timeline-track {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px 0 20px 30px;
+      }
+      .timeline-track::before {
+        left: 20px;
+        right: auto;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        height: 100%;
+        transform: none;
+      }
+      .timeline-node {
+        flex-direction: row;
+        margin: 25px 0;
+        width: 100%;
+      }
+      .detail-card {
+        position: relative;
+        top: auto !important;
+        bottom: auto !important;
+        left: 20px !important;
+        transform: none !important;
+        opacity: 1;
+        visibility: visible;
+        width: calc(100% - 60px);
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="timeline-container">
+    <div class="timeline-header">
+      <h2>Parth Mohata &bull; Chapter Journey</h2>
+      <p>Physics &mdash; Mathematical Tools</p>
+    </div>
+
+    <div class="timeline-track">
+      
+      <div class="timeline-node node-up" style="--node-color: var(--color-cct);">
+        <div class="icon-wrapper" style="color: var(--color-cct);">🎯</div>
+        <div class="detail-card">
+          <div class="date">22 Apr 2025</div>
+          <div class="title">CCT 01: Trigonometry Basics</div>
+          <div class="meta">Score: 6/6 (100%)</div>
+        </div>
+      </div>
+
+      <div class="timeline-node node-down" style="--node-color: var(--color-cct);">
+        <div class="icon-wrapper" style="color: var(--color-cct);">🎯</div>
+        <div class="detail-card">
+          <div class="date">22 Apr 2025</div>
+          <div class="title">CCT 02: Coordinate Geometry</div>
+          <div class="meta">Score: 6/6 (100%)</div>
+        </div>
+      </div>
+
+      <div class="timeline-node node-up" style="--node-color: var(--color-video);">
+        <div class="icon-wrapper" style="color: var(--color-video);">🎥</div>
+        <div class="detail-card">
+          <div class="date">26 May 2025</div>
+          <div class="title">Video: Basic Calculus</div>
+          <div class="meta">Duration: 28 min</div>
+        </div>
+      </div>
+
+      <div class="timeline-node node-down" style="--node-color: var(--color-quiz);">
+        <div class="icon-wrapper" style="color: var(--color-quiz);">📝</div>
+        <div class="detail-card">
+          <div class="date">26 May 2025</div>
+          <div class="title">Calculus Basics Quiz</div>
+          <div class="meta">Score: 8/11</div>
+        </div>
+      </div>
+
+      <div class="timeline-node node-up" style="--node-color: var(--color-video);">
+        <div class="icon-wrapper" style="color: var(--color-video);">🎥</div>
+        <div class="detail-card">
+          <div class="date">28 May 2025</div>
+          <div class="title">Video: Differentiation</div>
+          <div class="meta">Score: 38.75/52</div>
+        </div>
+      </div>
+
+      <div class="timeline-node node-down" style="--node-color: var(--color-quiz);">
+        <div class="icon-wrapper" style="color: var(--color-quiz);">📝</div>
+        <div class="detail-card">
+          <div class="date">28 May 2025</div>
+          <div class="title">Differentiation EoV Quiz</div>
+          <div class="meta">Score: 42/45</div>
+        </div>
+      </div>
+
+      <div class="timeline-node node-up" style="--node-color: var(--color-cct);">
+        <div class="icon-wrapper" style="color: var(--color-cct);">🎯</div>
+        <div class="detail-card">
+          <div class="date">29 May 2025</div>
+          <div class="title">CCT 04: Differentiation Basics</div>
+          <div class="meta" style="color: var(--color-test); background: #fef2f2;">Score: 9/24 (Critical)</div>
+        </div>
+      </div>
+
+      <div class="timeline-node node-down" style="--node-color: var(--color-test);">
+        <div class="icon-wrapper" style="color: var(--color-test);">🏆</div>
+        <div class="detail-card">
+          <div class="date">17 Jul 2025</div>
+          <div class="title">Chapter Test: Level 1</div>
+          <div class="meta">Score: 37/52</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
