@@ -128,4 +128,174 @@
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
-    /* X-Axis Date High
+    /* X-Axis Date Highlighting Tag */
+    .axis-date-tag {
+      position: absolute;
+      bottom: calc(-1 * var(--score-y) - 32px); /* Computes exact offset back to baseline x axis */
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #9ca3af;
+      white-space: nowrap;
+      transition: color 0.15s ease, font-size 0.15s ease;
+      pointer-events: none;
+    }
+
+    /* HOVER ACTIVATION MASTER TRIGGER */
+    .data-point-wrapper:hover {
+      z-index: 100;
+    }
+
+    .data-point-wrapper:hover .icon-node {
+      transform: scale(1.2);
+      background: var(--theme-color);
+    }
+    
+    .data-point-wrapper:hover .camera-svg {
+      stroke: #ffffff;
+    }
+
+    .data-point-wrapper:hover .hover-score-box {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    /* Lights up the respective guidelines and dates instantly */
+    .data-point-wrapper:hover + .guideline-x,
+    .data-point-wrapper:hover + .guideline-x + .guideline-y {
+      opacity: 1;
+    }
+
+    .data-point-wrapper:hover .axis-date-tag {
+      color: var(--theme-color);
+      font-size: 0.85rem;
+    }
+
+    /* Static Labels */
+    .y-axis-title {
+      position: absolute;
+      left: -50px;
+      top: 50%;
+      transform: rotate(-90deg) translateY(-50%);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #6b7280;
+      letter-spacing: 0.05em;
+    }
+
+    .chapter-elements-legend {
+      margin-top: 60px;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 24px;
+    }
+
+    .legend-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #4b5563;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .legend-flex { display: flex; gap: 32px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #374151; font-weight: 500; }
+
+    .sym-video { width: 16px; height: 16px; stroke: var(--color-video); stroke-width: 2; fill: none; }
+    .sym-quiz { width: 10px; height: 10px; border: 2px solid var(--color-quiz); transform: rotate(45deg); }
+    .sym-module { width: 10px; height: 10px; border: 2px solid var(--color-module); border-radius: 2px; }
+    .sym-cct { width: 10px; height: 10px; border: 2px solid var(--color-cct); border-radius: 50%; }
+    .sym-ct { width: 10px; height: 10px; border: 2px solid var(--color-ct); border-radius: 50%; background: var(--color-ct); }
+  </style>
+</head>
+<body>
+
+  <div class="analytics-container">
+    <div class="header-block">
+      <h2>Chapter Performance Journey Map</h2>
+      <p>Student Performance Footprint Matrix &bull; Parth Mohata</p>
+    </div>
+
+    <div style="position: relative; width: 100%;">
+      <div class="y-axis-title">Percentage Score</div>
+      
+      <div class="graph-canvas">
+        
+        <div class="data-point-wrapper" style="--date-x: 12%; --score-y: 100%; --node-size: 38px; --theme-color: var(--color-cct);">
+          <div class="icon-node"><span style="color: var(--color-cct); font-size: 1.2rem; font-weight: bold; line-height: 0;">○</span></div>
+          <div class="axis-date-tag">22 April</div>
+          <div class="hover-score-box">
+            <div style="font-size: 0.75rem; color: var(--color-cct); font-weight:700; text-transform:uppercase; margin-bottom:2px;">Concept Clarity</div>
+            <div class="node-title">CCT-1: Trigonometry Basics</div>
+            <div class="node-score">Score: 6/6 (100%)</div>
+          </div>
+        </div>
+        <div class="guideline-x" style="left: 12%; height: 100%;"></div>
+        <div class="guideline-y" style="bottom: 100%; left: 0; width: 12%;"></div>
+
+
+        <div class="data-point-wrapper" style="--date-x: 35%; --score-y: 20%; --node-size: 26px; --theme-color: var(--color-video);">
+          <div class="icon-node">
+            <svg class="camera-svg" viewBox="0 0 24 24">
+              <path d="M23 7l-7 5 7 5V7z"></path>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            </svg>
+          </div>
+          <div class="axis-date-tag">26 May</div>
+          <div class="hover-score-box">
+            <div style="font-size: 0.75rem; color: var(--color-video); font-weight:700; text-transform:uppercase; margin-bottom:2px;">Video Module</div>
+            <div class="node-title">Basic Calculus Core Intro</div>
+            <div class="node-score">Duration: 28 min</div>
+          </div>
+        </div>
+        <div class="guideline-x" style="left: 35%; height: 20%;"></div>
+        <div class="guideline-y" style="bottom: 20%; left: 0; width: 35%;"></div>
+
+
+        <div class="data-point-wrapper" style="--date-x: 60%; --score-y: 37.5%; --node-size: 25px; --theme-color: var(--color-cct);">
+          <div class="icon-node"><span style="color: var(--color-cct); font-size: 0.9rem; font-weight: bold; line-height: 0;">○</span></div>
+          <div class="axis-date-tag">29 May</div>
+          <div class="hover-score-box">
+            <div style="font-size: 0.75rem; color: var(--color-cct); font-weight:700; text-transform:uppercase; margin-bottom:2px;">Concept Clarity</div>
+            <div class="node-title">CCT-4: Differentiation Basics</div>
+            <div class="node-score">Score: 9/24 (37.5%)</div>
+          </div>
+        </div>
+        <div class="guideline-x" style="left: 60%; height: 37.5%;"></div>
+        <div class="guideline-y" style="bottom: 37.5%; left: 0; width: 60%;"></div>
+
+
+        <div class="data-point-wrapper" style="--date-x: 88%; --score-y: 71.2%; --node-size: 32px; --theme-color: var(--color-ct);">
+          <div class="icon-node" style="background: var(--color-ct);"><span style="color: #fff; font-size: 1rem; line-height: 0;">●</span></div>
+          <div class="axis-date-tag">17 July</div>
+          <div class="hover-score-box">
+            <div style="font-size: 0.75rem; color: var(--color-ct); font-weight:700; text-transform:uppercase; margin-bottom:2px;">Chapter Milestone</div>
+            <div class="node-title">Chapter Test - Level 1</div>
+            <div class="node-score">Score: 37/52 (71.2%)</div>
+          </div>
+        </div>
+        <div class="guideline-x" style="left: 88%; height: 71.2%;"></div>
+        <div class="guideline-y" style="bottom: 71.2%; left: 0; width: 88%;"></div>
+
+      </div>
+    </div>
+
+    <div class="chapter-elements-legend">
+      <div class="legend-title">Various Elements of a Chapter</div>
+      <div class="legend-flex">
+        <div class="legend-item">
+          <svg class="sym-video" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+          Video
+        </div>
+        <div class="legend-item"><span class="sym-quiz"></span> Quiz</div>
+        <div class="legend-item"><span class="sym-module"></span> Module</div>
+        <div class="legend-item"><span class="sym-cct"></span> CCT</div>
+        <div class="legend-item"><span class="sym-ct"></span> CT</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
