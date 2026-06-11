@@ -6,19 +6,19 @@
   <title>Interactive Student Chapter Analytics</title>
   <style>
     :root {
-      --color-video: #d946ef; /* Pink/Magenta Video Icon */
-      --color-quiz: #10b981;  /* Green Triangle Quiz */
-      --color-module: #f59e0b;/* Orange Square Module */
-      --color-cct: #f97316;   /* Deep Orange Circle CCT */
-      --color-ct: #ef4444;    /* Red Circle CT */
-      --axis-color: #374151;
+      --color-video: #d946ef; /* Pink/Magenta Video */
+      --color-quiz: #10b981;  /* Green Quiz */
+      --color-module: #f59e0b;/* Orange Module */
+      --color-cct: #f97316;   /* Deep Orange CCT */
+      --color-ct: #ef4444;    /* Red CT */
+      --axis-color: #1f2937;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: #fcfcfd;
       margin: 0;
-      padding: 40px 20px;
+      padding: 60px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -28,28 +28,28 @@
       width: 100%;
       max-width: 1050px;
       background: #ffffff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.02);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
     }
 
     .header-block {
-      margin-bottom: 20px;
+      margin-bottom: 40px;
     }
-    .header-block h2 { margin: 0 0 6px 0; color: #111827; font-size: 1.4rem; }
-    .header-block p { margin: 0; color: #6b7280; font-size: 0.9rem; }
+    .header-block h2 { margin: 0 0 6px 0; color: #111827; font-size: 1.5rem; font-weight: 700; }
+    .header-block p { margin: 0; color: #6b7280; font-size: 0.95rem; }
 
-    /* The Graph Canvas Space */
+    /* The Graph Workspace Grid */
     .graph-canvas {
       position: relative;
       width: 100%;
       height: 450px;
-      margin-top: 40px;
+      margin-top: 20px;
       border-bottom: 2px solid var(--axis-color);
-      border-left: 1px solid #e5e7eb; /* Soft baseline for axis, not aggressive */
+      border-left: 2px solid var(--axis-color);
     }
 
-    /* Invisible guidelines by default */
+    /* Guideline Vectors (Hidden by Default) */
     .guideline-x, .guideline-y {
       position: absolute;
       z-index: 1;
@@ -63,227 +63,69 @@
       bottom: 0;
     }
 
+    /* Fixed to run LEFT toward the score axis */
     .guideline-y {
       border-top: 1.5px dashed #9ca3af;
       left: 0;
     }
 
-    /* Interactive Data Plot Element */
-    .data-point-node {
+    /* Plot Coordinates Root */
+    .data-point-wrapper {
       position: absolute;
-      z-index: 3;
-      transform: translate(-50%, 50%); /* Center node over exact pixel coordinate */
-      cursor: pointer;
+      /* Center alignment logic */
+      transform: translate(-50%, 50%);
+      bottom: var(--score-y);
+      left: var(--date-x);
+      z-index: 5;
     }
 
-    /* Icon shapes & sizes matching image_1df240.png */
-    .icon-shape {
-      width: 24px;
-      height: 24px;
+    /* Interactive Icon Wrapper Node */
+    .icon-node {
+      width: var(--node-size);
+      height: var(--node-size);
+      background: #ffffff;
+      border: 2px solid var(--theme-color);
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
-      transition: transform 0.2s ease;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
-    /* HOVER ACTIVATION SYSTEM: Triggers Guidelines + Popover Card */
-    .data-point-node:hover .icon-shape {
-      transform: scale(1.3);
+    /* Customized Non-Circular Shapes based on element class mapping */
+    .shape-quiz { border-radius: 0; transform: rotate(45deg); width: calc(var(--node-size) * 0.85); height: calc(var(--node-size) * 0.85); }
+    .shape-module { border-radius: 4px; }
+
+    /* Elegant Camera Line Diagram Styling */
+    .camera-svg {
+      width: 60%;
+      height: 60%;
+      stroke: var(--color-video);
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
-    .data-point-node:hover ~ .guideline-x,
-    .data-point-node:hover ~ .guideline-y {
-      opacity: 1;
-    }
-
-    .data-point-node:hover .hover-score-box {
-      opacity: 1;
-      visibility: visible;
-      transform: translate(15px, -120%);
-    }
-
-    /* Floating Score Box from Sketch */
+    /* Popover Info Blueprint Box */
     .hover-score-box {
       position: absolute;
-      width: 210px;
+      width: 220px;
       background: #ffffff;
-      border: 1.5px solid #d1d5db;
-      border-radius: 6px;
-      padding: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
       z-index: 10;
-      left: 0;
+      left: calc(100% + 15px);
+      top: 50%;
+      transform: translateY(-50%) translateX(10px);
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
-    .hover-score-box .node-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 4px;
-    }
-
-    .hover-score-box .node-score {
-      font-size: 0.8rem;
-      color: #4b5563;
-    }
-
-    /* Static Axis Indicators */
-    .y-axis-label {
-      position: absolute;
-      left: -45px;
-      top: 50%;
-      transform: rotate(-90deg) translateY(-50%);
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #6b7280;
-      letter-spacing: 0.05em;
-    }
-
-    .x-axis-timeline-labels {
-      position: relative;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding-top: 10px;
-      color: #4b5563;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    /* Legend Segment styled perfectly to mimic 'Various Elements of a Chapter' */
-    .chapter-elements-legend {
-      margin-top: 50px;
-      border-top: 1px solid #e5e7eb;
-      padding-top: 20px;
-    }
-
-    .legend-title {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #4b5563;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .legend-flex {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.85rem;
-      color: #374151;
-      font-weight: 500;
-    }
-
-    /* Native CSS shapes mimicking symbols */
-    .sym-video { color: var(--color-video); font-weight: bold;}
-    .sym-quiz { color: var(--color-quiz); font-size: 1.2rem; }
-    .sym-module { width: 10px; height: 10px; background: white; border: 2px solid var(--color-module); }
-    .sym-cct { width: 10px; height: 10px; background: white; border: 2px solid var(--color-cct); border-radius: 50%; }
-    .sym-ct { width: 10px; height: 10px; background: white; border: 2px solid var(--color-ct); border-radius: 50%; }
-
-    /* Mobile handling overlay fallbacks */
-    @media (max-width: 640px) {
-      .hover-score-box { width: 160px; }
-      .legend-flex { gap: 12px; }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="analytics-container">
-    <div class="header-block">
-      <h2>Chapter Performance Journey Map</h2>
-      <p>Student Performance Footprint Matrix</p>
-    </div>
-
-    <div style="position: relative; width: 100%;">
-      <div class="y-axis-label">Percentage Score</div>
-      
-      <div class="graph-canvas">
-        
-        <!-- ELEMENT 1: CCT 01 (April 22) plotted at 100% Score -->
-        <!-- Coordinates map to left/bottom layout constraints -->
-        <div class="data-point-node" style="left: 10%; bottom: 100%;">
-          <div class="icon-shape"><span style="color: var(--color-cct);">○</span></div>
-          <div class="hover-score-box">
-            <div class="node-title">CCT-1: Trigonometry Basics</div>
-            <div class="node-score">Score: 6/6 (100%)</div>
-          </div>
-        </div>
-        <div class="guideline-x" style="left: 10%; height: 100%;"></div>
-        <div class="guideline-y" style="bottom: 100%; right: 0; left: 10%;"></div>
-
-        <!-- ELEMENT 2: Video: Basic Calculus (May 26) plotted at 28min baseline score placeholder (~15%) -->
-        <div class="data-point-node" style="left: 45%; bottom: 15%;">
-          <div class="icon-shape" style="color: var(--color-video); transform: scaleX(1.2);">📹</div>
-          <div class="hover-score-box">
-            <div class="node-title">Video: Basic Calculus Core</div>
-            <div class="node-score">Engagement Duration: 28 min</div>
-          </div>
-        </div>
-        <div class="guideline-x" style="left: 45%; height: 15%;"></div>
-        <div class="guideline-y" style="bottom: 15%; right: 0; left: 45%;"></div>
-
-        <!-- ELEMENT 3: CCT 04: Differentiation Basics (May 29) plotted at 37.5% Score -->
-        <div class="data-point-node" style="left: 55%; bottom: 37.5%;">
-          <div class="icon-shape"><span style="color: var(--color-cct);">○</span></div>
-          <div class="hover-score-box">
-            <div class="node-title">CCT-4: Differentiation Basics</div>
-            <div class="node-score">Score: 9/24 (37.5%)</div>
-          </div>
-        </div>
-        <div class="guideline-x" style="left: 55%; height: 37.5%;"></div>
-        <div class="guideline-y" style="bottom: 37.5%; right: 0; left: 55%;"></div>
-
-        <!-- ELEMENT 4: Chapter Test Level 1 (July 17) plotted at 71.2% Score -->
-        <div class="data-point-node" style="left: 90%; bottom: 71.2%;">
-          <div class="icon-shape"><span style="color: var(--color-ct); font-weight: bold;">●</span></div>
-          <div class="hover-score-box">
-            <div class="node-title">Chapter Test - Level 1</div>
-            <div class="node-score">Score: 37/52 (71.2%)</div>
-          </div>
-        </div>
-        <div class="guideline-x" style="left: 90%; height: 71.2%;"></div>
-        <div class="guideline-y" style="bottom: 71.2%; right: 0; left: 90%;"></div>
-
-      </div>
-      
-      <!-- Horizontal X Axis Dates System matching your drawing timeline layout -->
-      <div class="x-axis-timeline-labels">
-        <span>22 Apr</span>
-        <span>01 May</span>
-        <span>15 May</span>
-        <span>26 May</span>
-        <span>05 Jun</span>
-        <span>20 Jun</span>
-        <span>17 Jul</span>
-      </div>
-    </div>
-
-    <!-- Bottom Legend Matrix Footer matching image_1df240.png layout accurately -->
-    <div class="chapter-elements-legend">
-      <div class="legend-title">Various Elements of a Chapter</div>
-      <div class="legend-flex">
-        <div class="legend-item"><span class="sym-video">📹</span> Video</div>
-        <div class="legend-item"><span class="sym-quiz">▲</span> Quiz</div>
-        <div class="legend-item"><span class="sym-module"></span> Module</div>
-        <div class="legend-item"><span class="sym-cct"></span> CCT</div>
-        <div class="legend-item"><span class="sym-ct"></span> CT</div>
-      </div>
-    </div>
-  </div>
-
-</body>
-</html>
+    /* X-Axis Date High
