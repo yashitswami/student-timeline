@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Chapter Analytics - Chandra Prakash</title>
+  <title>Student Performance Dashboard - Chandra Prakash</title>
   <style>
     :root {
       --color-video: #d946ef;
@@ -12,45 +12,148 @@
       --color-cct: #f97316;
       --color-ct: #ef4444;
       --axis-color: #1f2937;
+      
+      /* Benchmark Colors */
+      --color-student: #ef4444;
+      --color-avg: #3b82f6;
+      --color-highest: #10b981;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: #fcfcfd;
       margin: 0;
-      padding: 60px 20px;
+      padding: 40px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      -webkit-tap-highlight-color: transparent; /* Clean iPad tap outline */
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .analytics-container {
+    .dashboard-container {
       width: 100%;
       max-width: 1050px;
       background: #ffffff;
       padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+      border-radius: 24px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.03);
     }
 
     .header-block {
-      margin-bottom: 40px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
     }
-    .header-block h2 { margin: 0 0 6px 0; color: #111827; font-size: 1.5rem; font-weight: 700; }
+    .header-block h2 { margin: 0 0 6px 0; color: #111827; font-size: 1.6rem; font-weight: 800; }
     .header-block p { margin: 0; color: #6b7280; font-size: 0.95rem; }
 
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #374151;
+      margin: 30px 0 15px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    /* -------------------------------------------------------------------------
+       NEW: TOP BENCHMARK BARS CHART 
+       ------------------------------------------------------------------------- */
+    .benchmark-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+
+    .benchmark-row {
+      margin-bottom: 20px;
+    }
+    .benchmark-row:last-child { margin-bottom: 0; }
+
+    .test-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .bars-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+
+    .bar-wrapper {
+      display: flex;
+      align-items: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .bar-legend-text { width: 110px; color: #4b5563; flex-shrink: 0; }
+    
+    .bar-track {
+      flex-grow: 1;
+      background: #e2e8f0;
+      height: 18px;
+      border-radius: 4px;
+      position: relative;
+      overflow: visible;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 6px;
+      color: white;
+      box-sizing: border-box;
+      min-width: 4px;
+      transition: width 0.5s ease;
+    }
+
+    /* Handles negative layout values safely */
+    .bar-fill.negative {
+      justify-content: flex-start;
+      padding-left: 6px;
+      border-radius: 4px;
+    }
+
+    .bar-value {
+      position: absolute;
+      right: -45px;
+      color: #111827;
+      font-size: 0.75rem;
+    }
+    .bar-fill.negative .bar-value { left: -45px; right: auto; color: var(--color-student); }
+
+    .benchmark-legends {
+      display: flex;
+      gap: 20px;
+      margin-top: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .bullet { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; }
+
+    /* -------------------------------------------------------------------------
+       GRAPH WORKSPACE CANVAS 
+       ------------------------------------------------------------------------- */
     .graph-wrapper {
       position: relative;
       width: 100%;
-      margin-top: 20px;
       padding-bottom: 40px;
     }
 
     .graph-canvas {
       position: relative;
       width: 100%;
-      height: 450px;
+      height: 400px;
       border-bottom: 2px solid var(--axis-color);
       border-left: 2px solid var(--axis-color);
       box-sizing: border-box;
@@ -133,27 +236,14 @@
       transition: color 0.15s ease, font-size 0.15s ease;
     }
 
-    /* DESKTOP HOVER CLASS AND TOUCH ACTIVE CLASS INJECTION */
+    /* Target Interactive States */
     .data-point-wrapper:hover { z-index: 100; }
-    
-    /* Using matching rules for hover OR active touch states */
     .data-point-wrapper:hover .icon-node,
-    .data-point-wrapper.active-touch .icon-node { 
-      transform: scale(1.25); 
-      background: var(--theme-color); 
-    }
-    
+    .data-point-wrapper.active-touch .icon-node { transform: scale(1.25); background: var(--theme-color); }
     .data-point-wrapper:hover .icon-node span,
-    .data-point-wrapper.active-touch .icon-node span { 
-      color: #ffffff !important; 
-    }
-    
+    .data-point-wrapper.active-touch .icon-node span { color: #ffffff !important; }
     .data-point-wrapper:hover .hover-score-box,
-    .data-point-wrapper.active-touch .hover-score-box { 
-      opacity: 1; 
-      visibility: visible; 
-      transform: translateY(-50%) translateX(0); 
-    }
+    .data-point-wrapper.active-touch .hover-score-box { opacity: 1; visibility: visible; transform: translateY(-50%) translateX(0); }
 
     .y-axis-title {
       position: absolute;
@@ -178,12 +268,59 @@
 </head>
 <body>
 
-  <div class="analytics-container">
+  <div class="dashboard-container">
     <div class="header-block">
-      <h2>Chapter Performance Journey Map &bull; Units and Measurements</h2>
-      <p>Student Performance Footprint Matrix &bull; <strong>Chandra Prakash Suthar</strong></p>
+      <h2>Comprehensive Chapter Analytics Card</h2>
+      <p>Physics &bull; Units and Measurements &bull; <strong>Chandra Prakash Suthar</strong></p>
     </div>
 
+    <div class="section-title">Cohort Benchmark Comparisons</div>
+    <div class="benchmark-section">
+      
+      <div class="benchmark-row">
+        <div class="test-label">Chapter Test - Level 1 - Units and Dimension</div>
+        <div class="bars-container">
+          <div class="bar-wrapper">
+            <span class="bar-legend-text">Chandra Prakash</span>
+            <div class="bar-track"><div class="bar-fill" style="width: 5.2%; background: var(--color-student);"><span class="bar-value">5.2%</span></div></div>
+          </div>
+          <div class="bar-wrapper">
+            <span class="bar-legend-text">Center Average</span>
+            <div class="bar-track"><div class="bar-fill" style="width: 68.6%; background: var(--color-avg);"><span class="bar-value">68.6%</span></div></div>
+          </div>
+          <div class="bar-wrapper">
+            <span class="bar-legend-text">Center Highest</span>
+            <div class="bar-track"><div class="bar-fill" style="width: 100%; background: var(--color-highest);"><span class="bar-value">100%</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="benchmark-row" style="margin-top: 30px;">
+        <div class="test-label">Chapter Test - Level 2 - Units and Dimensions (Negative Score Tracking)</div>
+        <div class="bars-container">
+          <div class="bar-wrapper">
+            <span class="bar-legend-text">Chandra Prakash</span>
+            <div class="bar-track" style="background: #fee2e2;"><div class="bar-fill negative" style="width: 12.5%; background: var(--color-student);"><span class="bar-value" style="left: 10px;">-12.5%</span></div></div>
+          </div>
+          <div class="bar-wrapper">
+            <span class="bar-legend-text">Center Average</span>
+            <div class="bar-track"><div class="bar-fill" style="width: 53.1%; background: var(--color-avg);"><span class="bar-value">53.1%</span></div></div>
+          </div>
+          <div class="bar-wrapper">
+            <span class="bar-legend-text">Center Highest</span>
+            <div class="bar-track"><div class="bar-fill" style="width: 100%; background: var(--color-highest);"><span class="bar-value">100%</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="benchmark-legends">
+        <div><span class="bullet" style="background: var(--color-student);"></span> Student</div>
+        <div><span class="bullet" style="background: var(--color-avg);"></span> Center Average</div>
+        <div><span class="bullet" style="background: var(--color-highest);"></span> Center Highest</div>
+      </div>
+    </div>
+
+    <div class="section-title">Timeline Learning Footprint</div>
     <div class="graph-wrapper">
       <div class="y-axis-title">Percentage Score</div>
       <div class="graph-canvas" id="canvas-container"></div>
@@ -201,6 +338,7 @@
   </div>
 
   <script>
+    // Primary chronological script arrays
     const chandraChapterData = [
       { id: "e1", date: "27 May", label: "Live Quiz Sessions 1 & 2", type: "quiz", scoreY: 68, size: 30, scoreText: "Session 1: 5/6 (83%)<br>Session 2: 4/8 (50%)", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
       { id: "e2", date: "02 Jun", label: "Live Quiz Sessions 4 & 5", type: "quiz", scoreY: 78, size: 32, scoreText: "Session 4: 4/4 (100%)<br>Session 5: 3/5 (60%)", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
@@ -244,14 +382,12 @@
       guidelineX.className = 'guideline-x';
       guidelineX.style.left = `${xCoordPct}%`;
       guidelineX.style.height = `${node.scoreY}%`;
-      guidelineX.id = `guideline-x-${node.id}`;
 
       const guidelineY = document.createElement('div');
       guidelineY.className = 'guideline-y';
       guidelineY.style.bottom = `${node.scoreY}%`;
       guidelineY.style.left = '0';
       guidelineY.style.width = `${xCoordPct}%`;
-      guidelineY.id = `guideline-y-${node.id}`;
 
       canvas.appendChild(nodeWrapper);
       canvas.appendChild(guidelineX);
@@ -267,9 +403,7 @@
         labelContainer.appendChild(dateTag);
       }
 
-      // HELPER FUNCTIONS FOR SEAMLESS STATE TOGGLING
       function activateNode() {
-        // Clear out other opened active layers first (crucial for clean iPad tapping)
         document.querySelectorAll('.data-point-wrapper').forEach(w => w.classList.remove('active-touch'));
         document.querySelectorAll('.guideline-x, .guideline-y').forEach(g => g.style.opacity = '0');
         document.querySelectorAll('.static-date-label').forEach(l => { l.style.color = '#9ca3af'; l.style.fontSize = '0.75rem'; });
@@ -289,22 +423,15 @@
         if (activeLabel) { activeLabel.style.color = '#9ca3af'; activeLabel.style.fontSize = '0.75rem'; }
       }
 
-      // MOUSE EVENTS (FOR DESKTOP PC)
       nodeWrapper.addEventListener('mouseenter', activateNode);
       nodeWrapper.addEventListener('mouseleave', deactivateNode);
 
-      // TOUCH EVENTS (FOR IPAD AND MOBILE ACCESSIBILITY)
       nodeWrapper.addEventListener('touchstart', (e) => {
-        e.preventDefault(); // Stop iOS from simulating mouse event latency delay
-        if (nodeWrapper.classList.contains('active-touch')) {
-          deactivateNode();
-        } else {
-          activateNode();
-        }
+        e.preventDefault();
+        if (nodeWrapper.classList.contains('active-touch')) { deactivateNode(); } else { activateNode(); }
       }, { passive: false });
     });
 
-    // Tap canvas backdrop background to close cards instantly on iPad
     canvas.addEventListener('touchstart', (e) => {
       if (e.target === canvas) {
         document.querySelectorAll('.data-point-wrapper').forEach(w => w.classList.remove('active-touch'));
