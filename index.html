@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Complete Student Performance Dashboard - Chandra Prakash</title>
+  <title>Student Performance Dashboard - Chandra Prakash</title>
   <style>
     :root {
-      --color-video: #d946ef;      /* Pink Camera */
-      --color-inclass: #10b981;     /* Emerald Triangle for Live Sessions */
-      --color-quiz: #06b6d4;        /* Cyan Square for Video Quizzes */
-      --color-material: #6366f1;    /* Indigo Document */
-      --color-assignment: #a855f7;  /* Purple Clipboard */
-      --color-milestone: #14b8a6;   /* Teal Flag */
-      --color-cct: #f97316;         /* Orange Circle CCT */
-      --color-ct: #ef4444;          /* Red Circle CT */
+      --color-video: #d946ef;      /* Pink */
+      --color-inclass: #10b981;     /* Emerald Live Quiz */
+      --color-quiz: #06b6d4;        /* Cyan Video Quiz */
+      --color-material: #6366f1;    /* Indigo */
+      --color-assignment: #a855f7;  /* Purple */
+      --color-milestone: #14b8a6;   /* Teal */
+      --color-cct: #f97316;         /* Orange CCT */
+      --color-ct: #ef4444;          /* Red CT */
       --axis-color: #1f2937;
       
       --color-student: #ef4444;
@@ -50,15 +50,15 @@
     .header-block p { margin: 0; color: #6b7280; font-size: 0.95rem; }
 
     .section-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: #374151;
-      margin: 30px 0 15px 0;
+      margin: 35px 0 15px 0;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.05em;
     }
 
-    /* COHORT COMPARISON COMPONENT */
+    /* COHORT BENCHMARK PANELS */
     .benchmark-section {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -69,32 +69,56 @@
     .benchmark-row { margin-bottom: 20px; }
     .benchmark-row:last-child { margin-bottom: 0; }
     .test-label { font-size: 0.85rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
-    .bars-container { display: flex; flex-direction: column; gap: 6px; position: relative; }
+    .bars-container { display: flex; flex-direction: column; gap: 6px; }
     .bar-wrapper { display: flex; align-items: center; font-size: 0.75rem; font-weight: 700; }
     .bar-legend-text { width: 110px; color: #4b5563; flex-shrink: 0; }
-    .bar-track { flex-grow: 1; background: #e2e8f0; height: 18px; border-radius: 4px; position: relative; }
-    .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; color: white; box-sizing: border-box; min-width: 4px; }
+    .bar-track { flex-grow: 1; background: #e2e8f0; height: 18px; border-radius: 4px; }
+    .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; color: white; box-sizing: border-box; }
     .bar-fill.negative { justify-content: flex-start; padding-left: 6px; }
     .bar-value { position: absolute; right: -45px; color: #111827; font-size: 0.75rem; }
     .bar-fill.negative .bar-value { left: -45px; right: auto; color: var(--color-student); }
     .benchmark-legends { display: flex; gap: 20px; margin-top: 15px; font-size: 0.8rem; font-weight: 600; }
     .bullet { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; }
 
-    /* CANVAS GRAPH LABELS SPACE */
+    /* CORE SEPARATED MULTI-CANVAS GRAPH SYSTEM */
     .graph-wrapper {
       position: relative;
       width: 100%;
-      margin-top: 10px;
-      padding-bottom: 40px;
+      box-sizing: border-box;
     }
 
-    .graph-canvas {
+    /* Canvas 1: Score Space */
+    .graph-canvas-score {
       position: relative;
       width: 100%;
-      height: 480px;
+      height: 380px;
       border-bottom: 2px solid var(--axis-color);
       border-left: 2px solid var(--axis-color);
       box-sizing: border-box;
+      background-image: linear-gradient(#f1f5f9 1px, transparent 1px);
+      background-size: 100% 25%; /* Subtle reference grids for 25, 50, 75, 100 */
+    }
+
+    /* Canvas 2: Asynchronous Score-Free Timeline Ribbon Track */
+    .graph-canvas-engagement {
+      position: relative;
+      width: 100%;
+      height: 120px;
+      border-left: 2px solid var(--axis-color);
+      border-bottom: 2px solid var(--axis-color);
+      background: #fdfeff;
+      box-sizing: border-box;
+      margin-top: 20px;
+    }
+
+    /* Central guide axis running inside the engagement ribbon */
+    .graph-canvas-engagement::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; top: 50%;
+      height: 2px; background: #e2e8f0;
+      transform: translateY(-50%);
+      z-index: 1;
     }
 
     .guideline-x, .guideline-y {
@@ -109,11 +133,13 @@
 
     .data-point-wrapper {
       position: absolute;
-      bottom: var(--score-y);
-      left: var(--date-x);
       transform: translate(-50%, 50%);
       z-index: 5;
     }
+
+    /* Placement roots mapping variables */
+    .graph-canvas-score .data-point-wrapper { bottom: var(--score-y); left: var(--date-x); }
+    .graph-canvas-engagement .data-point-wrapper { top: calc(50% - var(--node-size)/2); left: var(--date-x); transform: translateX(-50%); }
 
     .icon-node {
       width: var(--node-size);
@@ -125,27 +151,24 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
       box-sizing: border-box;
       transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* Shape Matrix Modifiers */
     .shape-inclass { border-radius: 4px; transform: rotate(45deg); }
     .shape-quiz { border-radius: 4px; }
     .shape-material { border-radius: 2px; }
-    .shape-assignment { border-radius: 6px; }
+    .shape-assignment { border-radius: 5px; }
 
     .camera-svg, .flag-svg {
       width: 60%; height: 60%;
-      stroke: var(--theme-color);
-      stroke-width: 2; fill: none;
-      stroke-linecap: round; stroke-linejoin: round;
+      stroke: var(--theme-color); stroke-width: 2; fill: none;
     }
 
     .hover-score-box {
       position: absolute;
-      width: 250px;
+      width: 240px;
       background: #ffffff;
       border: 1.5px solid #cbd5e1;
       border-radius: 8px;
@@ -165,21 +188,24 @@
     .hover-score-box .node-score { font-size: 0.8rem; color: #4b5563; line-height: 1.4; }
 
     .static-x-axis-labels {
-      position: absolute;
-      bottom: 0; left: 0; width: 100%;
-      height: 30px; pointer-events: none;
+      position: relative;
+      width: 100%;
+      height: 35px;
+      margin-top: 10px;
     }
 
     .static-date-label {
       position: absolute;
       left: var(--date-x);
       transform: translateX(-50%);
-      top: 10px; font-size: 0.75rem; font-weight: 700; color: #9ca3af;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #9ca3af;
       white-space: nowrap;
       transition: color 0.15s ease, font-size 0.15s ease;
     }
 
-    /* Target states */
+    /* State Interactions modifiers */
     .data-point-wrapper:hover { z-index: 100; }
     .data-point-wrapper:hover .icon-node,
     .data-point-wrapper.active-touch .icon-node { transform: scale(1.25); background: var(--theme-color); }
@@ -193,7 +219,17 @@
     .data-point-wrapper:hover + .guideline-x,
     .data-point-wrapper:hover + .guideline-x + .guideline-y { opacity: 1; }
 
-    /* Legend System Design */
+    .y-axis-title {
+      position: absolute;
+      left: -50px;
+      top: 50%;
+      transform: rotate(-90deg) translateY(-50%);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #6b7280;
+      letter-spacing: 0.05em;
+    }
+
     .chapter-elements-legend { margin-top: 40px; border-top: 1px solid #f1f5f9; padding-top: 24px; }
     .legend-title { font-size: 0.85rem; font-weight: 700; color: #4b5563; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
     .legend-flex { display: flex; gap: 24px; flex-wrap: wrap; }
@@ -243,11 +279,19 @@
       </div>
     </div>
 
-    <!-- 2. EXPANDED INTEGRATED GRAPH CANVAS -->
-    <div class="section-title">Timeline Learning Footprint Matrix</div>
+    <!-- 2. REFACTORED SEPARATED CANVASES DISPLAY -->
+    <div class="section-title">Graded Assessment Performance Map (0 - 100%)</div>
     <div class="graph-wrapper">
-      <div class="y-axis-title">Percentage Score</div>
-      <div class="graph-canvas" id="canvas-container"></div>
+      <div class="y-axis-title">Graded Score</div>
+      <div class="graph-canvas-score" id="score-canvas"></div>
+    </div>
+
+    <div class="section-title">Learning Resource Engagement ribbon</div>
+    <div class="graph-wrapper">
+      <div class="y-axis-title" style="transform: rotate(-90deg) translateY(-50%) translateX(-25px);">Resource Track</div>
+      <div class="graph-canvas-engagement" id="engagement-canvas"></div>
+      
+      <!-- Unified chronological timeline baseline labels -->
       <div class="static-x-axis-labels" id="axis-labels-container"></div>
     </div>
 
@@ -257,16 +301,10 @@
       <div class="legend-flex">
         <div class="legend-item"><span class="sym-inclass"></span> In-Class Quiz</div>
         <div class="legend-item"><span class="sym-quiz"></span> Video End Quiz</div>
-        <div class="legend-item">
-          <svg class="sym-video" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-          Video
-        </div>
+        <div class="legend-item"><svg class="sym-video" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg> Video</div>
         <div class="legend-item"><span class="sym-material"></span> Material</div>
         <div class="legend-item"><span class="sym-assignment"></span> Assignment</div>
-        <div class="legend-item">
-          <svg class="sym-milestone" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path></svg>
-          Milestone
-        </div>
+        <div class="legend-item"><svg class="sym-milestone" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path></svg> Milestone</div>
         <div class="legend-item"><span class="sym-cct"></span> CCT</div>
         <div class="legend-item"><span class="sym-ct"></span> CT (Chapter Test)</div>
       </div>
@@ -274,53 +312,60 @@
   </div>
 
   <script>
-    // Exhaustive structural data matrix parsed from Chandra Prakash's comprehensive chapter ledger
+    // Unified dataset structured safely to determine layout canvas rendering mapping
     const chandraChapterData = [
-      { id: "e1", date: "27 May", label: "Live Quiz Sessions 1 & 2", type: "In-Class Quiz", scoreY: 68, size: 30, scoreText: "Session 1: 5/6 (83%)<br>Session 2: 4/8 (50%)", colorVar: "var(--color-inclass)", shapeClass: "shape-inclass", innerHtml: "" },
-      { id: "e2", date: "02 Jun", label: "Live Quiz Sessions 4 & 5", type: "In-Class Quiz", scoreY: 78, size: 32, scoreText: "Session 4: 4/4 (100%)<br>Session 5: 3/5 (60%)", colorVar: "var(--color-inclass)", shapeClass: "shape-inclass", innerHtml: "" },
-      { id: "e3", date: "03 Jun", label: "Units Video End Quiz", type: "Video End Quiz", scoreY: 8.3, size: 24, scoreText: "Score: 4.00/48.00 (8.3%)<br>Status: Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
-      { id: "e4", date: "04 Jun", label: "Chain Rule - Subjective Quiz", type: "Assignment", scoreY: 4, size: 24, scoreText: "Status: Consumed<br>Score Type: Non-Graded Portfolio", colorVar: "var(--color-assignment)", shapeClass: "shape-assignment", innerHtml: "" },
-      { id: "e5", date: "04 Jun", label: "Module - Units & Measurements", type: "Material", scoreY: 8, size: 24, scoreText: "Status: Not Read", colorVar: "var(--color-material)", shapeClass: "shape-material", innerHtml: "" },
-      { id: "e6", date: "05 Jun", label: "NCERT - Units & Measurement Reference", type: "Material", scoreY: 4, size: 24, scoreText: "Status: Not Read", colorVar: "var(--color-material)", shapeClass: "shape-material", innerHtml: "" },
-      { id: "e7", date: "06 Jun", label: "Board Workbook Solutions", type: "Material", scoreY: 4, size: 24, scoreText: "Status: Not Read", colorVar: "var(--color-material)", shapeClass: "shape-material", innerHtml: "" },
-      { id: "e8", date: "07 Jun", label: "Physical Quantities and Units Lecture", type: "Video", scoreY: 15, size: 26, scoreText: "Status: Not Viewed<br>Score: 0/0", colorVar: "var(--color-video)", shapeClass: "", innerHtml: `<svg class="camera-svg" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>` },
-      { id: "e9", date: "08 Jun", label: "Dimensions & Dimensional Analysis", type: "Video", scoreY: 15, size: 26, scoreText: "Status: Not Viewed<br>Score: 0/0", colorVar: "var(--color-video)", shapeClass: "", innerHtml: `<svg class="camera-svg" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>` },
-      { id: "e10", date: "09 Jun", label: "Dimensional Analysis Video End Quiz", type: "Video End Quiz", scoreY: 4, size: 24, scoreText: "Status: Not Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
-      { id: "e11", date: "09 Jun", label: "Significant Digits Video", type: "Video", scoreY: 15, size: 26, scoreText: "Status: Not Viewed<br>Score: 0/0", colorVar: "var(--color-video)", shapeClass: "", innerHtml: `<svg class="camera-svg" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>` },
-      { id: "e12", date: "10 Jun", label: "Significant Digits End Quiz", type: "Video End Quiz", scoreY: 4, size: 24, scoreText: "Status: Not Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
-      { id: "e13", date: "11 Jun", label: "Parallax Method Video", type: "Video", scoreY: 15, size: 26, scoreText: "Status: Not Viewed<br>Score: 0/0", colorVar: "var(--color-video)", shapeClass: "", innerHtml: `<svg class="camera-svg" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>` },
-      { id: "e14", date: "11 Jun", label: "Live Quiz Sessions 6 & 7", type: "In-Class Quiz", scoreY: 50, size: 28, scoreText: "Session 6: 1/2 (50%)<br>Session 7: 0/0", colorVar: "var(--color-inclass)", shapeClass: "shape-inclass", innerHtml: "" },
-      { id: "e15", date: "12 Jun", label: "Parallax Video End Quiz", type: "Video End Quiz", scoreY: 4, size: 24, scoreText: "Status: Not Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
-      { id: "e16", date: "13 Jun", label: "Error Analysis Backup Lecture Video", type: "Material", scoreY: 4, size: 24, scoreText: "Status: Not Read", colorVar: "var(--color-material)", shapeClass: "shape-material", innerHtml: "" },
-      { id: "e17", date: "13 Jun", label: "In-Class Quiz - Units & Measurement", type: "Video End Quiz", scoreY: 8, size: 24, scoreText: "Status: Not Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
-      { id: "e18", date: "13 Jun", label: "CCT 01: Units & Dimensions", type: "CCT", scoreY: 15.3, size: 24, scoreText: "Score: 2.00/13.00 (15.3%)", colorVar: "var(--color-cct)", shapeClass: "", innerHtml: "<span style='color: var(--color-cct); font-weight: bold;'>○</span>" },
-      { id: "e19", date: "13 Jun", label: "CCT 02: Significant Figures", type: "CCT", scoreY: 33.3, size: 26, scoreText: "Score: 3.00/9.00 (33.3%)", colorVar: "var(--color-cct)", shapeClass: "", innerHtml: "<span style='color: var(--color-cct); font-weight: bold;'>○</span>" },
-      { id: "e20", date: "14 Jun", label: "Live Quiz Session 8", type: "In-Class Quiz", scoreY: 50, size: 28, scoreText: "Score: 1/2 (50%)", colorVar: "var(--color-inclass)", shapeClass: "shape-inclass", innerHtml: "" },
-      { id: "e21", date: "14 Jun", label: "Milestone: CCT 03 Error Analysis", type: "Milestone", scoreY: 12, size: 26, scoreText: "Status: Not Completed", colorVar: "var(--color-milestone)", shapeClass: "", innerHtml: `<svg class="flag-svg" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path></svg>` },
-      { id: "e22", date: "17 Jun", label: "Chapter Milestone Evaluations", type: "Chapter Test", scoreY: 5.1, size: 24, scoreText: "Level 1 Test: 3/58 (5.1%)<br>Level 2 Test: -3/24 (Negative)", colorVar: "var(--color-ct)", shapeClass: "", innerHtml: "<span style='color: #fff; font-size: 0.8rem; line-height:0;'>●</span>" }
+      { id: "e1", date: "27 May", label: "Live Quiz Sessions 1 & 2", type: "In-Class Quiz", isGraded: true, scoreY: 68, size: 30, scoreText: "Session 1: 5/6 (83%)<br>Session 2: 4/8 (50%)", colorVar: "var(--color-inclass)", shapeClass: "shape-inclass", innerHtml: "" },
+      { id: "e2", date: "02 Jun", label: "Live Quiz Sessions 4 & 5", type: "In-Class Quiz", isGraded: true, scoreY: 78, size: 32, scoreText: "Session 4: 4/4 (100%)<br>Session 5: 3/5 (60%)", colorVar: "var(--color-inclass)", shapeClass: "shape-inclass", innerHtml: "" },
+      { id: "e3", date: "03 Jun", label: "Units Video End Quiz", type: "Video End Quiz", isGraded: true, scoreY: 8.3, size: 24, scoreText: "Score: 4.00/48.00 (8.3%)<br>Status: Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
+      { id: "e4", date: "04 Jun", label: "Chain Rule - Subjective Quiz", type: "Assignment", isGraded: false, size: 26, scoreText: "Status: Consumed", colorVar: "var(--color-assignment)", shapeClass: "shape-assignment", innerHtml: "" },
+      { id: "e5", date: "04 Jun", label: "Module - Units & Measurements", type: "Material", isGraded: false, size: 24, scoreText: "Status: Not Read", colorVar: "var(--color-material)", shapeClass: "shape-material", innerHtml: "" },
+      { id: "e6", date: "05 Jun", label: "NCERT - Units & Measurement Reference", type: "Material", isGraded: false, size: 24, scoreText: "Status: Not Read", colorVar: "var(--color-material)", shapeClass: "shape-material", innerHtml: "" },
+      { id: "e7", date: "06 Jun", label: "Board Workbook Solutions", type: "Material", isGraded: false, size: 24, scoreText: "Status: Not Read", colorVar: "var(--color-material)", shapeClass: "shape-material", innerHtml: "" },
+      { id: "e8", date: "07 Jun", label: "Physical Quantities and Units Lecture", type: "Video", isGraded: false, size: 28, scoreText: "Status: Not Viewed", colorVar: "var(--color-video)", shapeClass: "", innerHtml: `<svg class="camera-svg" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>` },
+      { id: "e9", date: "08 Jun", label: "Dimensions & Dimensional Analysis", type: "Video", isGraded: false, size: 28, scoreText: "Status: Not Viewed", colorVar: "var(--color-video)", shapeClass: "", innerHtml: `<svg class="camera-svg" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>` },
+      { id: "e10", date: "09 Jun", label: "Dimensional Analysis Video End Quiz", type: "Video End Quiz", isGraded: true, scoreY: 4, size: 24, scoreText: "Status: Not Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
+      { id: "e11", date: "09 Jun", label: "Significant Digits Video", type: "Video", isGraded: false, size: 28, scoreText: "Status: Not Viewed", colorVar: "var(--color-video)", shapeClass: "", innerHtml: `<svg class="camera-svg" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>` },
+      { id: "e12", date: "10 Jun", label: "Significant Digits End Quiz", type: "Video End Quiz", isGraded: true, scoreY: 4, size: 24, scoreText: "Status: Not Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
+      { id: "e13", date: "11 Jun", label: "Parallax Method Video", type: "Video", isGraded: false, size: 28, scoreText: "Status: Not Viewed", colorVar: "var(--color-video)", shapeClass: "", innerHtml: `<svg class="camera-svg" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>` },
+      { id: "e14", date: "11 Jun", label: "Live Quiz Sessions 6 & 7", type: "In-Class Quiz", isGraded: true, scoreY: 50, size: 28, scoreText: "Session 6: 1/2 (50%)<br>Session 7: 0/0", colorVar: "var(--color-inclass)", shapeClass: "shape-inclass", innerHtml: "" },
+      { id: "e15", date: "12 Jun", label: "Parallax Video End Quiz", type: "Video End Quiz", isGraded: true, scoreY: 4, size: 24, scoreText: "Status: Not Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
+      { id: "e16", date: "13 Jun", label: "Error Analysis Backup Lecture Video", type: "Material", isGraded: false, size: 24, scoreText: "Status: Not Read", colorVar: "var(--color-material)", shapeClass: "shape-material", innerHtml: "" },
+      { id: "e17", date: "13 Jun", label: "In-Class Quiz - Units & Measurement", type: "Video End Quiz", isGraded: true, scoreY: 8, size: 24, scoreText: "Status: Not Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "" },
+      { id: "e18", date: "13 Jun", label: "CCT 01: Units & Dimensions", type: "CCT", isGraded: true, scoreY: 15.3, size: 24, scoreText: "Score: 2.00/13.00 (15.3%)", colorVar: "var(--color-cct)", shapeClass: "", innerHtml: "<span style='color: var(--color-cct); font-weight: bold;'>○</span>" },
+      { id: "e19", date: "13 Jun", label: "CCT 02: Significant Figures", type: "CCT", isGraded: true, scoreY: 33.3, size: 26, scoreText: "Score: 3.00/9.00 (33.3%)", colorVar: "var(--color-cct)", shapeClass: "", innerHtml: "<span style='color: var(--color-cct); font-weight: bold;'>○</span>" },
+      { id: "e20", date: "14 Jun", label: "Live Quiz Session 8", type: "In-Class Quiz", isGraded: true, scoreY: 50, size: 28, scoreText: "Score: 1/2 (50%)", colorVar: "var(--color-inclass)", shapeClass: "shape-inclass", innerHtml: "" },
+      { id: "e21", date: "14 Jun", label: "Milestone: CCT 03 Error Analysis", type: "Milestone", isGraded: false, size: 26, scoreText: "Status: Not Completed", colorVar: "var(--color-milestone)", shapeClass: "", innerHtml: `<svg class="flag-svg" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path></svg>` },
+      { id: "e22", date: "17 Jun", label: "Chapter Milestone Evaluations", type: "Chapter Test", isGraded: true, scoreY: 5.1, size: 24, scoreText: "Level 1 Test: 3/58 (5.1%)<br>Level 2 Test: -3/24 (Negative)", colorVar: "var(--color-ct)", shapeClass: "", innerHtml: "<span style='color: #fff; font-size: 0.8rem; line-height:0;'>●</span>" }
     ];
 
-    // Uniformly handles chronological progression positioning coordinates mapping
+    // Shared chronological spacing timeline parameters mapping array
     const timelineTimelineMap = {
       "27 May": 5, "02 Jun": 14, "03 Jun": 23, "04 Jun": 32, "05 Jun": 41, "06 Jun": 50, 
       "07 Jun": 56, "08 Jun": 62, "09 Jun": 68, "10 Jun": 74, "11 Jun": 80, "12 Jun": 86, 
       "13 Jun": 90, "14 Jun": 94, "17 Jun": 98
     };
 
-    const canvas = document.getElementById('canvas-container');
+    const scoreCanvas = document.getElementById('score-canvas');
+    const engagementCanvas = document.getElementById('engagement-canvas');
     const labelContainer = document.getElementById('axis-labels-container');
     const renderedDates = new Set();
 
     chandraChapterData.forEach((node) => {
       const xCoordPct = timelineTimelineMap[node.date]; 
       
+      // Select the canvas depending on whether the item is graded or not
+      const activeCanvas = node.isGraded ? scoreCanvas : engagementCanvas;
+
       const nodeWrapper = document.createElement('div');
       nodeWrapper.className = 'data-point-wrapper';
       nodeWrapper.id = `wrapper-${node.id}`;
       nodeWrapper.style.setProperty('--date-x', `${xCoordPct}%`);
-      nodeWrapper.style.setProperty('--score-y', `${node.scoreY}%`);
       nodeWrapper.style.setProperty('--node-size', `${node.size}px`);
       nodeWrapper.style.setProperty('--theme-color', node.colorVar);
+      
+      if (node.isGraded) {
+        nodeWrapper.style.setProperty('--score-y', `${node.scoreY}%`);
+      }
 
       nodeWrapper.innerHTML = `
         <div class="icon-node ${node.shapeClass}">${node.innerHtml}</div>
@@ -331,21 +376,28 @@
         </div>
       `;
 
-      const guidelineX = document.createElement('div');
-      guidelineX.className = 'guideline-x';
-      guidelineX.style.left = `${xCoordPct}%`;
-      guidelineX.style.height = `${node.scoreY}%`;
+      // Render guidelines only for graded items on the top canvas
+      let guidelineX, guidelineY;
+      if (node.isGraded) {
+        guidelineX = document.createElement('div');
+        guidelineX.className = 'guideline-x';
+        guidelineX.style.left = `${xCoordPct}%`;
+        guidelineX.style.height = `${node.scoreY}%`;
 
-      const guidelineY = document.createElement('div');
-      guidelineY.className = 'guideline-y';
-      guidelineY.style.bottom = `${node.scoreY}%`;
-      guidelineY.style.left = '0';
-      guidelineY.style.width = `${xCoordPct}%`;
+        guidelineY = document.createElement('div');
+        guidelineY.className = 'guideline-y';
+        guidelineY.style.bottom = `${node.scoreY}%`;
+        guidelineY.style.left = '0';
+        guidelineY.style.width = `${xCoordPct}%`;
 
-      canvas.appendChild(nodeWrapper);
-      canvas.appendChild(guidelineX);
-      canvas.appendChild(guidelineY);
+        activeCanvas.appendChild(nodeWrapper);
+        activeCanvas.appendChild(guidelineX);
+        activeCanvas.appendChild(guidelineY);
+      } else {
+        activeCanvas.appendChild(nodeWrapper);
+      }
 
+      // Generate the chronological timeline baseline labels below the bottom track
       if (!renderedDates.has(node.date)) {
         renderedDates.add(node.date);
         const dateTag = document.createElement('div');
@@ -362,16 +414,20 @@
         document.querySelectorAll('.static-date-label').forEach(l => { l.style.color = '#9ca3af'; l.style.fontSize = '0.75rem'; });
 
         nodeWrapper.classList.add('active-touch');
-        guidelineX.style.opacity = '1';
-        guidelineY.style.opacity = '1';
+        if (node.isGraded) {
+          guidelineX.style.opacity = '1';
+          guidelineY.style.opacity = '1';
+        }
         const activeLabel = document.getElementById(`date-label-${node.date.replace(' ', '-')}`);
         if (activeLabel) { activeLabel.style.color = node.colorVar; activeLabel.style.fontSize = '0.85rem'; }
       }
 
       function deactivateNode() {
         nodeWrapper.classList.remove('active-touch');
-        guidelineX.style.opacity = '0';
-        guidelineY.style.opacity = '0';
+        if (node.isGraded) {
+          guidelineX.style.opacity = '0';
+          guidelineY.style.opacity = '0';
+        }
         const activeLabel = document.getElementById(`date-label-${node.date.replace(' ', '-')}`);
         if (activeLabel) { activeLabel.style.color = '#9ca3af'; activeLabel.style.fontSize = '0.75rem'; }
       }
@@ -382,14 +438,6 @@
         e.preventDefault();
         if (nodeWrapper.classList.contains('active-touch')) { deactivateNode(); } else { activateNode(); }
       }, { passive: false });
-    });
-
-    canvas.addEventListener('touchstart', (e) => {
-      if (e.target === canvas) {
-        document.querySelectorAll('.data-point-wrapper').forEach(w => w.classList.remove('active-touch'));
-        document.querySelectorAll('.guideline-x, .guideline-y').forEach(g => g.style.opacity = '0');
-        document.querySelectorAll('.static-date-label').forEach(l => { l.style.color = '#9ca3af'; l.style.fontSize = '0.75rem'; });
-      }
     });
   </script>
 </body>
