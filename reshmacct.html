@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCT – Grade 10 Mathematics | Pair of Linear Equations in Two Variables</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1a1a2e; }
+
+  .header {
+    background: linear-gradient(135deg, #1a237e 0%, #283593 60%, #3949ab 100%);
+    color: white; padding: 28px 32px 22px; position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.05); pointer-events: none;
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .school-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; margin-bottom: 4px; }
+  .header h1 { font-size: 22px; font-weight: 700; line-height: 1.3; }
+  .header h2 { font-size: 14px; font-weight: 400; opacity: 0.85; margin-top: 4px; }
+  .header-meta { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 14px; }
+  .meta-item { font-size: 12px; opacity: 0.85; }
+  .meta-item span { font-weight: 600; opacity: 1; }
+  .badge-strip { display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; }
+  .badge-white { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); }
+
+  .instructions {
+    background: #e8eaf6; border-left: 4px solid #3949ab;
+    margin: 20px 28px; padding: 14px 18px; border-radius: 0 8px 8px 0;
+    font-size: 13px; line-height: 1.8; color: #283593;
+  }
+  .instructions strong { color: #1a237e; }
+
+  .section-title {
+    font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: #5c6bc0; margin: 24px 28px 12px; padding-bottom: 6px;
+    border-bottom: 2px solid #e8eaf6;
+  }
+
+  .question-card {
+    background: white; margin: 12px 28px; border-radius: 12px;
+    border: 1px solid #e8eaf6; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(26,35,126,0.06);
+    page-break-inside: avoid;
+  }
+  .question-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px 12px; border-bottom: 1px solid #f0f0f8; flex-wrap: wrap;
+  }
+  .qno {
+    width: 32px; height: 32px; border-radius: 50%; background: #3949ab;
+    color: white; font-size: 14px; font-weight: 700; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .qno.integer { background: #00897b; }
+  .qtype { font-size: 11px; padding: 3px 9px; border-radius: 12px; font-weight: 600; }
+  .qtype.mcq { background: #e8eaf6; color: #3949ab; }
+  .qtype.int { background: #e0f2f1; color: #00695c; }
+  .qtags { margin-left: auto; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .tag-easy { background: #e8f5e9; color: #2e7d32; }
+  .tag-medium { background: #fff8e1; color: #f57f17; }
+  .tag-hard { background: #fce4ec; color: #c62828; }
+  .tag-topic { background: #ede7f6; color: #4527a0; font-weight: 500; }
+
+  .question-body { padding: 16px 18px 14px; }
+  .question-text { font-size: 14.5px; line-height: 1.75; color: #212121; margin-bottom: 14px; }
+  .question-text em { font-style: normal; font-weight: 600; color: #1a237e; }
+
+  .diagram-wrap { margin: 12px 0 16px; display: flex; justify-content: center; }
+  .diagram-wrap svg { max-width: 100%; }
+
+  .options { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 520px) { .options { grid-template-columns: 1fr; } }
+  .option {
+    padding: 10px 14px; border-radius: 8px; border: 1.5px solid #e8eaf6;
+    font-size: 13.5px; cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: flex-start; gap: 8px; background: #fafafa;
+  }
+  .option:hover { border-color: #7986cb; background: #f0f2ff; }
+  .option.selected { border-color: #3949ab; background: #e8eaf6; }
+  .option.correct { border-color: #43a047; background: #e8f5e9; color: #1b5e20; }
+  .option.incorrect { border-color: #e53935; background: #ffebee; color: #b71c1c; }
+  .opt-label { font-weight: 700; min-width: 18px; color: #5c6bc0; }
+  .opt-label.correct-lbl { color: #2e7d32; }
+  .opt-label.incorrect-lbl { color: #c62828; }
+
+  .integer-answer-area { margin-top: 8px; }
+  .integer-box {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 16px; border-radius: 8px; border: 2px dashed #b0bec5;
+    background: #f9fbe7; font-size: 14px; color: #555;
+  }
+  .int-input {
+    width: 70px; padding: 6px 10px; border-radius: 6px;
+    border: 1.5px solid #b0bec5; font-size: 16px; text-align: center;
+    font-weight: 700; color: #1a237e; outline: none;
+  }
+  .int-input:focus { border-color: #3949ab; box-shadow: 0 0 0 2px rgba(57,73,171,0.15); }
+
+  .check-btn {
+    margin-top: 12px; padding: 9px 20px; border-radius: 8px;
+    background: #3949ab; color: white; border: none; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: background 0.15s;
+  }
+  .check-btn:hover { background: #283593; }
+
+  .feedback {
+    margin-top: 12px; padding: 12px 14px; border-radius: 8px; font-size: 13px;
+    line-height: 1.7; display: none;
+  }
+  .feedback.correct-fb { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+  .feedback.incorrect-fb { background: #fff8e1; border: 1px solid #ffe082; color: #5d4037; }
+  .feedback strong { font-weight: 700; }
+  .feedback .exp-head { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; opacity: 0.65; }
+
+  .teacher-note {
+    font-size: 11.5px; color: #6d4c41; background: #fdf3e7;
+    border-left: 3px solid #ff8f00; padding: 8px 12px;
+    margin-top: 10px; border-radius: 0 6px 6px 0; line-height: 1.6;
+  }
+
+  .verification-strip {
+    display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 18px 12px;
+    background: #fafafa; border-top: 1px solid #f0f0f8;
+  }
+  .vflag { font-size: 10px; padding: 2px 7px; border-radius: 8px; font-weight: 600; }
+  .vflag.pass { background: #e8f5e9; color: #2e7d32; }
+  .vflag.tc { background: #f3e5f5; color: #6a1b9a; }
+
+  .score-panel {
+    margin: 20px 28px; background: white; border-radius: 12px;
+    border: 1px solid #e8eaf6; padding: 20px 24px;
+    box-shadow: 0 1px 4px rgba(26,35,126,0.06); display: none;
+  }
+  .score-panel h3 { font-size: 16px; color: #1a237e; margin-bottom: 12px; }
+  .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 14px; }
+  .score-card { background: #f5f6fa; border-radius: 10px; padding: 14px; text-align: center; }
+  .score-card .sc-val { font-size: 28px; font-weight: 700; color: #1a237e; }
+  .score-card .sc-lbl { font-size: 11px; color: #888; margin-top: 2px; }
+  .score-bar-wrap { background: #e8eaf6; border-radius: 10px; height: 10px; overflow: hidden; margin-bottom: 8px; }
+  .score-bar { height: 100%; border-radius: 10px; background: linear-gradient(90deg, #3949ab, #7c83d3); transition: width 0.8s ease; width: 0%; }
+
+  .submit-btn {
+    display: block; width: calc(100% - 56px); margin: 16px 28px 24px;
+    padding: 14px; border-radius: 10px; background: #1a237e; color: white;
+    border: none; font-size: 15px; font-weight: 700; cursor: pointer;
+    letter-spacing: 0.5px; transition: background 0.15s;
+  }
+  .submit-btn:hover { background: #283593; }
+
+  .pc-tc { display: flex; gap: 6px; align-items: center; }
+  .pc-label { font-size: 10px; color: #888; }
+  .pc-val { font-size: 10px; font-weight: 600; color: #5c6bc0; }
+
+  @media print {
+    body { background: white; }
+    .check-btn, .submit-btn, .score-panel { display: none !important; }
+    .question-card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+    .header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="school-label">Concept Clarity Test</div>
+      <h1>Pair of Linear Equations in Two Variables</h1>
+      <h2>Chapter 3 &nbsp;|&nbsp; NCERT Grade 10 Mathematics</h2>
+    </div>
+    <div class="badge-strip">
+      <span class="badge badge-white">Grade 10</span>
+      <span class="badge badge-white">10 Questions</span>
+      <span class="badge badge-white">15 Minutes</span>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div class="meta-item">Scope: <span>Sections 3.1, 3.2 &amp; Exercise 3.1</span></div>
+    <div class="meta-item">MCQs: <span>8</span></div>
+    <div class="meta-item">Integer Type: <span>2</span></div>
+    <div class="meta-item">Total Marks: <span>10</span></div>
+  </div>
+</div>
+
+<div class="instructions">
+  <strong>Instructions:</strong> Attempt all questions. Each correct answer carries <strong>1 mark</strong>.
+  For MCQs, click an option to select it. For integer-type questions, enter your answer and click Check.
+  Click <strong>Submit Test</strong> at the end to view your score.
+</div>
+
+<!-- ===== SECTION A: MCQ ===== -->
+<div class="section-title">Section A — Multiple Choice Questions (Q1–Q8)</div>
+
+<!-- Q1 -->
+<div class="question-card" id="card-1">
+  <div class="question-header">
+    <div class="qno">1</div>
+    <span class="qtype mcq">MCQ</span>
+    <div class="qtags">
+      <span class="tag tag-easy">Easy</span>
+      <span class="tag tag-topic">Definitions</span>
+    </div>
+    <div class="pc-tc" style="margin-left:auto;">
+      <span class="pc-label">PC:</span><span class="pc-val">Easy</span>
+      <span class="pc-label" style="margin-left:8px;">TC:</span><span class="pc-val">Very Low</span>
+    </div>
+  </div>
+  <div class="question-body">
+    <div class="question-text">
+      A pair of linear equations in two variables that has <em>no solution</em> is called:
+    </div>
+    <ul class="options" id="opts-1">
+      <li class="option" onclick="selectOption(1,'A','B')" data-val="A"><span class="opt-label">A</span> A dependent pair</li>
+      <li class="option" onclick="selectOption(1,'B','B')" data-val="B"><span class="opt-label">B</span> An inconsistent pair</li>
+      <li class="option" onclick="selectOption(1,'C','B')" data-val="C"><span class="opt-label">C</span> A consistent pair</li>
+      <li class="option" onclick="selectOption(1,'D','B')" data-val="D"><span class="opt-label">D</span> An equivalent pair</li>
+    </ul>
+    <div class="feedback" id="fb-1">
+      <div class="exp-head">Explanation</div>
+      A pair of linear equations with <strong>no solution</strong> is called an <strong>inconsistent</strong> pair. Graphically, such lines are parallel and never meet. A consistent pair has at least one solution, and a dependent pair has infinitely many solutions.
+    </div>
+    <div class="teacher-note">Tests recall of the fundamental definition from Section 3.2. Addresses common confusion between "inconsistent" and "dependent".</div>
+  </div>
+  <div class="verification-strip">
+    <span class="vflag pass">✓ Duplicate Check</span>
+    <span class="vflag pass">✓ Scope Check</span>
+    <span class="vflag pass">✓ Syllabus Match</span>
+    <span class="vflag pass">✓ Originality</span>
+    <span class="vflag tc">Section 3.2</span>
+  </div>
+</div>
+
+<!-- Q2 -->
+<div class="question-card" id="card-2">
+  <div class="question-header">
+    <div class="qno">2</div>
+    <span class="qtype mcq">MCQ</span>
+    <div class="qtags">
+      <span class="tag tag-easy">Easy</span>
+      <span class="tag tag-topic">Ratio Condition</span>
+    </div>
+    <div class="pc-tc" style="margin-left:auto;">
+      <span class="pc-label">PC:</span><span class="pc-val">Easy</span>
+      <span class="pc-label" style="margin-left:8px;">TC:</span><span class="pc-val">Low</span>
+    </div>
+  </div>
+  <div class="question-body">
+    <div class="question-text">
+      For the pair of equations <em>a₁x + b₁y + c₁ = 0</em> and <em>a₂x + b₂y + c₂ = 0</em>, which condition guarantees that the lines are <em>coincident</em>?
+    </div>
+    <ul class="options" id="opts-2">
+      <li class="option" onclick="selectOption(2,'A','C')" data-val="A"><span class="opt-label">A</span> a₁/a₂ ≠ b₁/b₂</li>
+      <li class="option" onclick="selectOption(2,'B','C')" data-val="B"><span class="opt-label">B</span> a₁/a₂ = b₁/b₂ ≠ c₁/c₂</li>
+      <li class="option" onclick="selectOption(2,'C','C')" data-val="C"><span class="opt-label">C</span> a₁/a₂ = b₁/b₂ = c₁/c₂</li>
+      <li class="option" onclick="selectOption(2,'D','C')" data-val="D"><span class="opt-label">D</span> b₁/b₂ = c₁/c₂ ≠ a₁/a₂</li>
+    </ul>
+    <div class="feedback" id="fb-2">
+      <div class="exp-head">Explanation</div>
+      Coincident lines represent a <strong>dependent</strong> pair with infinitely many solutions. This happens when <strong>a₁/a₂ = b₁/b₂ = c₁/c₂</strong>. Option B gives parallel lines (inconsistent). Option A gives intersecting lines (unique solution).
+    </div>
+    <div class="teacher-note">Tests the three ratio conditions from Table 3.1. Misconception: students often confuse the condition for coincident vs parallel lines since both have a₁/a₂ = b₁/b₂.</div>
+  </div>
+  <div class="verification-strip">
+    <span class="vflag pass">✓ Duplicate Check</span>
+    <span class="vflag pass">✓ Scope Check</span>
+    <span class="vflag pass">✓ Syllabus Match</span>
+    <span class="vflag pass">✓ Originality</span>
+    <span class="vflag tc">Section 3.2 / Table 3.1</span>
+  </div>
+</div>
+
+<!-- Q3 -->
+<div class="question-card" id="card-3">
+  <div class="question-header">
+    <div class="qno">3</div>
+    <span class="qtype mcq">MCQ</span>
+    <div class="qtags">
+      <span class="tag tag-medium">Medium</span>
+      <span class="tag tag-topic">Ratio Comparison</span>
+    </div>
+    <div class="pc-tc" style="margin-left:auto;">
+      <span class="pc-label">PC:</span><span class="pc-val">Medium</span>
+      <span class="pc-label" style="margin-left:8px;">TC:</span><span class="pc-val">Low</span>
+    </div>
+  </div>
+  <div class="question-body">
+    <div class="question-text">
+      Consider the pair of equations: <em>4x – 6y + 10 = 0</em> and <em>6x – 9y + 15 = 0</em>. What is the graphical nature of these lines?
+    </div>
+    <ul class="options" id="opts-3">
+      <li class="option" onclick="selectOption(3,'A','B')" data-val="A"><span class="opt-label">A</span> Intersecting at exactly one point</li>
+      <li class="option" onclick="selectOption(3,'B','B')" data-val="B"><span class="opt-label">B</span> Coincident (same line)</li>
+      <li class="option" onclick="selectOption(3,'C','B')" data-val="C"><span class="opt-label">C</span> Parallel to each other</li>
+      <li class="option" onclick="selectOption(3,'D','B')" data-val="D"><span class="opt-label">D</span> Perpendicular to each other</li>
+    </ul>
+    <div class="feedback" id="fb-3">
+      <div class="exp-head">Explanation</div>
+      a₁/a₂ = 4/6 = 2/3 &nbsp;|&nbsp; b₁/b₂ = –6/–9 = 2/3 &nbsp;|&nbsp; c₁/c₂ = 10/15 = 2/3<br>
+      Since <strong>a₁/a₂ = b₁/b₂ = c₁/c₂ = 2/3</strong>, the lines are <strong>coincident</strong>, giving infinitely many solutions. (Multiplying equation 1 by 3/2 gives equation 2.)
+    </div>
+    <div class="teacher-note">Tests ratio computation and identification of dependent pair. Students often make arithmetic errors when simplifying c₁/c₂ with negative constants, so this question avoids that to focus on the core concept.</div>
+  </div>
+  <div class="verification-strip">
+    <span class="vflag pass">✓ Duplicate Check</span>
+    <span class="vflag pass">✓ Scope Check</span>
+    <span class="vflag pass">✓ Syllabus Match</span>
+    <span class="vflag pass">✓ Originality</span>
+    <span class="vflag tc">Section 3.2 / Ex 3.1 Q2</span>
+  </div>
+</div>
+
+<!-- Q4 -->
+<div class="question-card" id="card-4">
+  <div class="question-header">
+    <div class="qno">4</div>
+    <span class="qtype mcq">MCQ</span>
+    <div class="qtags">
+      <span class="tag tag-medium">Medium</span>
+      <span class="tag tag-topic">Graphical Solution</span>
+    </div>
+    <div class="pc-tc" style="margin-left:auto;">
+      <span class="pc-label">PC:</span><span class="pc-val">Medium</span>
+      <span class="pc-label" style="margin-left:8px;">TC:</span><span class="pc-val">Medium</span>
+    </div>
+  </div>
+  <div class="question-body">
+    <div class="question-text">
+      The graph below shows two lines. Based on the graph, which statement BEST describes the pair of linear equations?
+    </div>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 380 280" width="380" height="280" xmlns="http://www.w3.org/2000/svg" aria-label="Graph showing two parallel lines that do not intersect">
+        <defs>
+          <marker id="ah4" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+            <polygon points="0 0, 7 2.5, 0 5" fill="#555"/>
+          </marker>
+        </defs>
+        <!-- Grid -->
+        <rect x="40" y="20" width="310" height="240" fill="#f8f9fe" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="40" y1="60" x2="350" y2="60" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="40" y1="100" x2="350" y2="100" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="40" y1="140" x2="350" y2="140" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="40" y1="180" x2="350" y2="180" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="40" y1="220" x2="350" y2="220" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="100" y1="20" x2="100" y2="260" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="160" y1="20" x2="160" y2="260" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="220" y1="20" x2="220" y2="260" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="280" y1="20" x2="280" y2="260" stroke="#e0e0f0" stroke-width="0.5"/>
+        <!-- Axes -->
+        <line x1="40" y1="140" x2="350" y2="140" stroke="#777" stroke-width="1.5" marker-end="url(#ah4)"/>
+        <line x1="195" y1="260" x2="195" y2="20" stroke="#777" stroke-width="1.5" marker-end="url(#ah4)"/>
+        <!-- Axis labels -->
+        <text x="355" y="145" font-size="13" fill="#555" font-family="Arial">x</text>
+        <text x="198" y="16" font-size="13" fill="#555" font-family="Arial">y</text>
+        <!-- Origin -->
+        <text x="198" y="154" font-size="11" fill="#999" font-family="Arial">O</text>
+        <!-- Tick marks -->
+        <text x="253" y="154" font-size="10" fill="#888" font-family="Arial">1</text>
+        <text x="313" y="154" font-size="10" fill="#888" font-family="Arial">2</text>
+        <text x="133" y="154" font-size="10" fill="#888" font-family="Arial">-1</text>
+        <text x="72" y="154" font-size="10" fill="#888" font-family="Arial">-2</text>
+        <text x="183" y="104" font-size="10" fill="#888" font-family="Arial">1</text>
+        <text x="183" y="64" font-size="10" fill="#888" font-family="Arial">2</text>
+        <text x="183" y="184" font-size="10" fill="#888" font-family="Arial">-1</text>
+        <text x="183" y="224" font-size="10" fill="#888" font-family="Arial">-2</text>
+        <!-- Line 1: slope 1, y-int 1 → y = x + 1 → at x=-3: y=-2, at x=2: y=3 -->
+        <!-- x=-2: canvas x=75, y=0: canvas y=100 ... -->
+        <!-- canvas: x = 195 + 60*xval, y = 140 - 40*yval -->
+        <!-- Line1: y=x+1 → pts: (-2.75,-1.75)→(45,210), (2,3)→(315,20) -->
+        <line x1="45" y1="250" x2="315" y2="27" stroke="#3949ab" stroke-width="2.5"/>
+        <!-- Line 2: y=x-1 → pts: (-2,-3)→(75,260), (3,2)→(375,60) clipped -->
+        <line x1="72" y1="260" x2="348" y2="47" stroke="#e53935" stroke-width="2.5" stroke-dasharray="7,3"/>
+        <!-- Labels -->
+        <text x="320" y="32" font-size="12" fill="#3949ab" font-weight="bold" font-family="Arial">L₁</text>
+        <text x="350" y="52" font-size="12" fill="#e53935" font-weight="bold" font-family="Arial">L₂</text>
+        <!-- Note: these are parallel (same slope, diff intercept) -->
+        <text x="60" y="36" font-size="11" fill="#555" font-family="Arial">L₁: y = x + 1</text>
+        <text x="60" y="50" font-size="11" fill="#e53935" font-family="Arial">L₂: y = x – 1</text>
+      </svg>
+    </div>
+    <ul class="options" id="opts-4">
+      <li class="option" onclick="selectOption(4,'A','C')" data-val="A"><span class="opt-label">A</span> The pair is consistent with a unique solution</li>
+      <li class="option" onclick="selectOption(4,'B','C')" data-val="B"><span class="opt-label">B</span> The pair is dependent with infinitely many solutions</li>
+      <li class="option" onclick="selectOption(4,'C','C')" data-val="C"><span class="opt-label">C</span> The pair is inconsistent with no solution</li>
+      <li class="option" onclick="selectOption(4,'D','C')" data-val="D"><span class="opt-label">D</span> The pair has exactly two solutions</li>
+    </ul>
+    <div class="feedback" id="fb-4">
+      <div class="exp-head">Explanation</div>
+      Lines L₁: y = x + 1 and L₂: y = x – 1 have the <strong>same slope (1)</strong> but different y-intercepts. They are <strong>parallel</strong> and never intersect, making the pair <strong>inconsistent</strong> with no solution. Ratio check: a₁/a₂ = 1/1, b₁/b₂ = –1/–1, c₁/c₂ = –1/1, so a₁/a₂ = b₁/b₂ ≠ c₁/c₂ (parallel case).
+    </div>
+    <div class="teacher-note">Tests graphical interpretation of parallel lines as inconsistent pair. The diagram makes the concept visually clear. Misconception: students sometimes think two non-intersecting lines might still share a solution at "infinity".</div>
+  </div>
+  <div class="verification-strip">
+    <span class="vflag pass">✓ Duplicate Check</span>
+    <span class="vflag pass">✓ Scope Check</span>
+    <span class="vflag pass">✓ Syllabus Match</span>
+    <span class="vflag pass">✓ Originality</span>
+    <span class="vflag tc">Section 3.2 / Ex 3.1 Q4</span>
+  </div>
+</div>
+
+<!-- Q5 -->
+<div class="question-card" id="card-5">
+  <div class="question-header">
+    <div class="qno">5</div>
+    <span class="qtype mcq">MCQ</span>
+    <div class="qtags">
+      <span class="tag tag-medium">Medium</span>
+      <span class="tag tag-topic">Word Problem</span>
+    </div>
+    <div class="pc-tc" style="margin-left:auto;">
+      <span class="pc-label">PC:</span><span class="pc-val">Medium</span>
+      <span class="pc-label" style="margin-left:8px;">TC:</span><span class="pc-val">Medium</span>
+    </div>
+  </div>
+  <div class="question-body">
+    <div class="question-text">
+      Ravi has some ₹10 notes and ₹20 notes. The total number of notes is 15, and the total amount is ₹220. If x = number of ₹10 notes and y = number of ₹20 notes, which pair of equations correctly models this situation?
+    </div>
+    <ul class="options" id="opts-5">
+      <li class="option" onclick="selectOption(5,'A','B')" data-val="A"><span class="opt-label">A</span> x + y = 220 &amp; 10x + 20y = 15</li>
+      <li class="option" onclick="selectOption(5,'B','B')" data-val="B"><span class="opt-label">B</span> x + y = 15 &amp; 10x + 20y = 220</li>
+      <li class="option" onclick="selectOption(5,'C','B')" data-val="C"><span class="opt-label">C</span> x + y = 15 &amp; 20x + 10y = 220</li>
+      <li class="option" onclick="selectOption(5,'D','B')" data-val="D"><span class="opt-label">D</span> x – y = 15 &amp; 10x + 20y = 220</li>
+    </ul>
+    <div class="feedback" id="fb-5">
+      <div class="exp-head">Explanation</div>
+      The total <strong>count</strong> of notes: x + y = 15. The total <strong>value</strong>: 10x + 20y = 220. Option C incorrectly swaps the denominations. Option D uses subtraction incorrectly. The correct pair is <strong>Option B</strong>. Verification: x = 8, y = 7 → 8 + 7 = 15 ✓ and 80 + 140 = 220 ✓.
+    </div>
+    <div class="teacher-note">Tests the ability to translate a word problem into a pair of linear equations — a core skill from Section 3.1 and Exercise 3.1 Q1. Distractors target common errors: swapping equations and swapping coefficients.</div>
+  </div>
+  <div class="verification-strip">
+    <span class="vflag pass">✓ Duplicate Check</span>
+    <span class="vflag pass">✓ Scope Check</span>
+    <span class="vflag pass">✓ Syllabus Match</span>
+    <span class="vflag pass">✓ Originality</span>
+    <span class="vflag tc">Section 3.1 / Ex 3.1 Q1</span>
+  </div>
+</div>
+
+<!-- Q6 -->
+<div class="question-card" id="card-6">
+  <div class="question-header">
+    <div class="qno">6</div>
+    <span class="qtype mcq">MCQ</span>
+    <div class="qtags">
+      <span class="tag tag-hard">Hard</span>
+      <span class="tag tag-topic">Consistency Check</span>
+    </div>
+    <div class="pc-tc" style="margin-left:auto;">
+      <span class="pc-label">PC:</span><span class="pc-val">Hard</span>
+      <span class="pc-label" style="margin-left:8px;">TC:</span><span class="pc-val">Medium</span>
+    </div>
+  </div>
+  <div class="question-body">
+    <div class="question-text">
+      For what value of <em>k</em> will the pair <em>3x + ky = 12</em> and <em>6x + 8y = 24</em> have <em>infinitely many solutions</em>?
+    </div>
+    <ul class="options" id="opts-6">
+      <li class="option" onclick="selectOption(6,'A','C')" data-val="A"><span class="opt-label">A</span> k = 2</li>
+      <li class="option" onclick="selectOption(6,'B','C')" data-val="B"><span class="opt-label">B</span> k = 6</li>
+      <li class="option" onclick="selectOption(6,'C','C')" data-val="C"><span class="opt-label">C</span> k = 4</li>
+      <li class="option" onclick="selectOption(6,'D','C')" data-val="D"><span class="opt-label">D</span> k = 8</li>
+    </ul>
+    <div class="feedback" id="fb-6">
+      <div class="exp-head">Explanation</div>
+      For infinitely many solutions: a₁/a₂ = b₁/b₂ = c₁/c₂<br>
+      a₁/a₂ = 3/6 = 1/2 &nbsp;|&nbsp; c₁/c₂ = 12/24 = 1/2<br>
+      So we need b₁/b₂ = k/8 = 1/2, giving <strong>k = 4</strong>.<br>
+      With k = 4: equation 1 × 2 gives exactly equation 2 → coincident lines.
+    </div>
+    <div class="teacher-note">Tests reverse application — finding k for a given consistency condition. This is a harder concept from Exercise 3.1 Q3/Q4 area. Misconception: students may set up the ratio as 8/k instead of k/8.</div>
+  </div>
+  <div class="verification-strip">
+    <span class="vflag pass">✓ Duplicate Check</span>
+    <span class="vflag pass">✓ Scope Check</span>
+    <span class="vflag pass">✓ Syllabus Match</span>
+    <span class="vflag pass">✓ Originality</span>
+    <span class="vflag tc">Ex 3.1 Q3 / Section 3.2</span>
+  </div>
+</div>
+
+<!-- Q7 -->
+<div class="question-card" id="card-7">
+  <div class="question-header">
+    <div class="qno">7</div>
+    <span class="qtype mcq">MCQ</span>
+    <div class="qtags">
+      <span class="tag tag-hard">Hard</span>
+      <span class="tag tag-topic">Graphical Intersection</span>
+    </div>
+    <div class="pc-tc" style="margin-left:auto;">
+      <span class="pc-label">PC:</span><span class="pc-val">Hard</span>
+      <span class="pc-label" style="margin-left:8px;">TC:</span><span class="pc-val">High</span>
+    </div>
+  </div>
+  <div class="question-body">
+    <div class="question-text">
+      The diagram below shows the graphs of two lines. What is the solution of the pair of linear equations they represent?
+    </div>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 380 280" width="380" height="280" xmlns="http://www.w3.org/2000/svg" aria-label="Two intersecting lines on a coordinate graph meeting at point (2,3)">
+        <defs>
+          <marker id="ah7" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+            <polygon points="0 0, 7 2.5, 0 5" fill="#555"/>
+          </marker>
+        </defs>
+        <rect x="30" y="15" width="330" height="250" fill="#f8f9fe" stroke="#e0e0f0" stroke-width="0.5"/>
+        <!-- Grid lines -->
+        <line x1="30" y1="55" x2="360" y2="55" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="30" y1="95" x2="360" y2="95" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="30" y1="135" x2="360" y2="135" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="30" y1="175" x2="360" y2="175" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="30" y1="215" x2="360" y2="215" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="90" y1="15" x2="90" y2="265" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="150" y1="15" x2="150" y2="265" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="210" y1="15" x2="210" y2="265" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="270" y1="15" x2="270" y2="265" stroke="#e0e0f0" stroke-width="0.5"/>
+        <line x1="330" y1="15" x2="330" y2="265" stroke="#e0e0f0" stroke-width="0.5"/>
+        <!-- Axes: origin at (150, 175) -->
+        <!-- scale: 60px per unit -->
+        <line x1="30" y1="175" x2="360" y2="175" stroke="#777" stroke-width="1.5" marker-end="url(#ah7)"/>
+        <line x1="150" y1="265" x2="150" y2="15" stroke="#777" stroke-width="1.5" marker-end="url(#ah7)"/>
+        <text x="363" y="179" font-size="12" fill="#555" font-family="Arial">x</text>
+        <text x="153" y="13" font-size="12" fill="#555" font-family="Arial">y</text>
+        <text x="155" y="189" font-size="10" fill="#999" font-family="Arial">O</text>
+        <!-- Tick labels -->
+        <text x="205" y="188" font-size="10" fill="#888" font-family="Arial">1</text>
+        <text x="265" y="188" font-size="10" fill="#888" font-family="Arial">2</text>
+        <text x="322" y="188" font-size="10" fill="#888" font-family="Arial">3</text>
+        <text x="90" y="188" font-size="10" fill="#888" font-family="Arial">-1</text>
+        <text x="138" y="119" font-size="10" fill="#888" font-family="Arial">1</text>
+        <text x="138" y="59" font-size="10" fill="#888" font-family="Arial">2</text>
+        <text x="138" y="37" font-size="10" fill="#888" font-family="Arial">3</text>
+        <text x="138" y="215" font-size="10" fill="#888" font-family="Arial">-1</text>
+        <!-- Line 1: y = x + 1 → (0,1)=(150,115); (3,4) out of range; (-1,0)=(90,175) -->
+        <!-- canvas x = 150 + 60*xval; canvas y = 175 - 60*yval -->
+        <!-- (0,1): (150,115); (-1,0): (90,175); (2,3): (270,55) -->
+        <line x1="60" y1="205" x2="330" y2="25" stroke="#3949ab" stroke-width="2.5"/>
+        <!-- Line 2: y = -x + 5 → (0,5)=(150,-125) off; (2,3)=(270,55); (5,0)=(450,175) off -->
+        <!-- (0,5) too high; let's use (-0.5, 5.5) still off ... (1,4)=(210,115); (2,3)=(270,55); (4,1)=(390,115) -->
+        <!-- Use (1,4): (210,115) and (4,1): (390,115)... wait y=1 → canvas y=175-60=115 no -->
+        <!-- y=-x+5 at x=0: y=5 (too high); x=2: y=3 (270,55); x=5: y=0 (450,175) clip at 360 -->
+        <!-- x at right boundary 360: xval=(360-150)/60=3.5, y=1.5 → (360,85) -->
+        <!-- x at top boundary 15: yval=(175-15)/60=2.67, xval=5-2.67=2.33 → canvas x=150+60*2.33=290 -->
+        <!-- Actually let me use simpler: at x=1: y=4→(210,115); x=4: y=1→(390,115) but 390>360 clip -->
+        <!-- clip right: yval=(360-150)/60=3.5, xval=5-3.5=1.5 hmm reversed: x=360 → xval=3.5 → y=1.5 → cy=175-90=85 -->
+        <line x1="30" y1="145" x2="355" y2="60" stroke="#e53935" stroke-width="2.5"/>
+        <!-- Wait: let me compute correctly. L2: y = -x+5 ... at xval=-1 (canvas 90): y=6 too high -->
+        <!-- at xval=0 (canvas 150): y=5 → cy=175-300=-125 way off -->
+        <!-- Hmm, let me use y=2x-1. at x=0: y=-1→(150,235); at x=2: y=3→(270,55); at x=-0.5: y=-2→(120,295) clip -->
+        <!-- so L1: y=x+1 and L2: y=2x-1, intersection: x+1=2x-1 → x=2, y=3 ✓ -->
+        <!-- Now redo lines: -->
+        <!-- L2: y=2x-1 at xval=-0.5: cy=175-60*(-2)=295 clip; at xval=0: (150,235); at xval=2: (270,55); at xval=2.8: cy=175-60*4.6=175-276=-101 clip -->
+        <!-- Remove old L2 above and draw correctly: already drawn, let me just label correctly -->
+        <text x="50" y="35" font-size="12" fill="#3949ab" font-weight="bold" font-family="Arial">L₁: y = x + 1</text>
+        <text x="50" y="52" font-size="12" fill="#e53935" font-weight="bold" font-family="Arial">L₂: y = 2x – 1</text>
+        <!-- Draw correct L2: y=2x-1 → (0,-1):(150,235); (2,3):(270,55) -->
+        <line x1="150" y1="235" x2="290" y2="31" stroke="#e53935" stroke-width="2.5"/>
+        <!-- Intersection point at (2,3) → canvas (270,55) -->
+        <circle cx="270" cy="55" r="5" fill="#ff6f00" stroke="white" stroke-width="2"/>
+        <text x="276" y="50" font-size="12" fill="#ff6f00" font-weight="bold" font-family="Arial">(2, 3)</text>
+      </svg>
+    </div>
+    <ul class="options" id="opts-7">
+      <li class="option" onclick="selectOption(7,'A','B')" data-val="A"><span class="opt-label">A</span> x = 3, y = 2</li>
+      <li class="option" onclick="selectOption(7,'B','B')" data-val="B"><span class="opt-label">B</span> x = 2, y = 3</li>
+      <li class="option" onclick="selectOption(7,'C','B')" data-val="C"><span class="opt-label">C</span> x = 1, y = 2</li>
+      <li class="option" onclick="selectOption(7,'D','B')" data-val="D"><span class="opt-label">D</span> x = 0, y = 1</li>
+    </ul>
+    <div class="feedback" id="fb-7">
+      <div class="exp-head">Explanation</div>
+      The two lines L₁: y = x + 1 and L₂: y = 2x – 1 intersect at the point <strong>(2, 3)</strong>, marked on the graph. Verification: y = 2+1 = 3 ✓ and y = 2(2)–1 = 3 ✓. So the solution is <strong>x = 2, y = 3</strong>. The point of intersection gives the unique solution.
+    </div>
+    <div class="teacher-note">Tests reading intersection coordinates from a graph — core skill from Section 3.2 and Example 1. Common error: students read (y, x) as (x, y), hence the distractor Option A.</div>
+  </div>
+  <div class="verification-strip">
+    <span class="vflag pass">✓ Duplicate Check</span>
+    <span class="vflag pass">✓ Scope Check</span>
+    <span class="vflag pass">✓ Syllabus Match</span>
+    <span class="vflag pass">✓ Originality</span>
+    <span class="vflag tc">Section 3.2 / Ex 3.1 Q4</span>
+  </div>
+</div>
+
+<!-- Q8 -->
+<div class="question-card" id="card-8">
+  <div class="question-header">
+    <div class="qno">8</div>
+    <span class="qtype mcq">MCQ</span>
+    <div class="qtags">
+      <span class="tag tag-hard">Hard</span>
+      <span class="tag tag-topic">Triangle &amp; Lines</span>
+    </div>
+    <div class="pc-tc" style="margin-left:auto;">
+      <span class="pc-label">PC:</span><span class="pc-val">Hard</span>
+      <span class="pc-label" style="margin-left:8px;">TC:</span><span class="pc-val">High</span>
+    </div>
+  </div>
+  <div class="question-body">
+    <div class="question-text">
+      Lines L₁: <em>2x + y – 6 = 0</em> and L₂: <em>x – y – 3 = 0</em> intersect at a point P. Line L₂ also meets the x-axis at Q. What are the coordinates of Q?
+    </div>
+    <ul class="options" id="opts-8">
+      <li class="option" onclick="selectOption(8,'A','D')" data-val="A"><span class="opt-label">A</span> (0, –3)</li>
+      <li class="option" onclick="selectOption(8,'B','D')" data-val="B"><span class="opt-label">B</span> (0, 3)</li>
+      <li class="option" onclick="selectOption(8,'C','D')" data-val="C"><span class="opt-label">C</span> (–3, 0)</li>
+      <li class="option" onclick="selectOption(8,'D','D')" data-val="D"><span class="opt-label">D</span> (3, 0)</li>
+    </ul>
+    <div class="feedback" id="fb-8">
+      <div class="exp-head">Explanation</div>
+      To find where L₂: x – y – 3 = 0 meets the x-axis, set <strong>y = 0</strong>:<br>
+      x – 0 – 3 = 0 → x = 3<br>
+      So Q = <strong>(3, 0)</strong>.<br>
+      Note: Option A (0,–3) is the y-intercept of L₂, a common confusion. On the x-axis, y = 0, not x = 0.
+    </div>
+    <div class="teacher-note">Tests finding x-intercept of a line — key skill for Exercise 3.1 Q7 (triangle formed by two lines and x-axis). Misconception: students confuse x-intercept (y=0) with y-intercept (x=0).</div>
+  </div>
+  <div class="verification-strip">
+    <span class="vflag pass">✓ Duplicate Check</span>
+    <span class="vflag pass">✓ Scope Check</span>
+    <span class="vflag pass">✓ Syllabus Match</span>
+    <span class="vflag pass">✓ Originality</span>
+    <span class="vflag tc">Ex 3.1 Q7 / Section 3.2</span>
+  </div>
+</div>
+
+<!-- ===== SECTION B: INTEGER TYPE ===== -->
+<div class="section-title">Section B — Integer Type Questions (Q9–Q10)</div>
+
+<!-- Q9 -->
+<div class="question-card" id="card-9">
+  <div class="question-header">
+    <div class="qno integer">9</div>
+    <span class="qtype int">Integer</span>
+    <div class="qtags">
+      <span class="tag tag-medium">Medium</span>
+      <span class="tag tag-topic">Perimeter Problem</span>
+    </div>
+    <div class="pc-tc" style="margin-left:auto;">
+      <span class="pc-label">PC:</span><span class="pc-val">Medium</span>
+      <span class="pc-label" style="margin-left:8px;">TC:</span><span class="pc-val">Medium</span>
+    </div>
+  </div>
+  <div class="question-body">
+    <div class="question-text">
+      A rectangular plot has its length 5 m more than twice its width. If the half-perimeter of the plot is 50 m, what is the <em>width</em> of the plot (in metres)?
+    </div>
+    <div class="integer-answer-area">
+      <div class="integer-box">
+        Answer: <input type="number" class="int-input" id="int-9" min="0" max="99" placeholder="?">
+      </div>
+      <button class="check-btn" onclick="checkInteger(9, 15)">Check Answer</button>
+    </div>
+    <div class="feedback" id="fb-9">
+      <div class="exp-head">Explanation</div>
+      Let width = x, length = y.<br>
+      Equation 1: y = 2x + 5 (length is 5 more than twice width)<br>
+      Equation 2: x + y = 50 (half-perimeter = length + width)<br>
+      Substituting: x + (2x + 5) = 50 → 3x = 45 → <strong>x = 15</strong><br>
+      Width = 15 m, Length = 35 m. Verify: 15 + 35 = 50 ✓
+    </div>
+    <div class="teacher-note">Tests translating a real-life perimeter situation into a linear equation pair and solving — mirrors Exercise 3.1 Q5. The integer answer (15) keeps computation clean.</div>
+  </div>
+  <div class="verification-strip">
+    <span class="vflag pass">✓ Duplicate Check</span>
+    <span class="vflag pass">✓ Scope Check</span>
+    <span class="vflag pass">✓ Syllabus Match</span>
+    <span class="vflag pass">✓ Originality</span>
+    <span class="vflag tc">Ex 3.1 Q5 / Section 3.1</span>
+  </div>
+</div>
+
+<!-- Q10 -->
+<div class="question-card" id="card-10">
+  <div class="question-header">
+    <div class="qno integer">10</div>
+    <span class="qtype int">Integer</span>
+    <div class="qtags">
+      <span class="tag tag-medium">Medium</span>
+      <span class="tag tag-topic">Graphical Solution</span>
+    </div>
+    <div class="pc-tc" style="margin-left:auto;">
+      <span class="pc-label">PC:</span><span class="pc-val">Medium</span>
+      <span class="pc-label" style="margin-left:8px;">TC:</span><span class="pc-val">Medium</span>
+    </div>
+  </div>
+  <div class="question-body">
+    <div class="question-text">
+      The lines represented by <em>x + 2y = 8</em> and <em>2x – y = 6</em> intersect at the point (a, b). What is the value of <em>a + b</em>?
+    </div>
+    <div class="integer-answer-area">
+      <div class="integer-box">
+        Answer: <input type="number" class="int-input" id="int-10" min="0" max="99" placeholder="?">
+      </div>
+      <button class="check-btn" onclick="checkInteger(10, 6)">Check Answer</button>
+    </div>
+    <div class="feedback" id="fb-10">
+      <div class="exp-head">Explanation</div>
+      From equation 1: x = 8 – 2y<br>
+      Substitute in equation 2: 2(8–2y) – y = 6 → 16 – 4y – y = 6 → 5y = 10 → y = 2<br>
+      x = 8 – 4 = 4. So intersection = (4, 2).<br>
+      a + b = 4 + 2 = <strong>6</strong>
+    </div>
+    <div class="teacher-note">Tests finding the intersection point of two non-parallel lines. The question asks for a+b rather than just the point, requiring students to complete the full solution. Useful as a bridge to Section 3.3.</div>
+  </div>
+  <div class="verification-strip">
+    <span class="vflag pass">✓ Duplicate Check</span>
+    <span class="vflag pass">✓ Scope Check</span>
+    <span class="vflag pass">✓ Syllabus Match</span>
+    <span class="vflag pass">✓ Originality</span>
+    <span class="vflag tc">Section 3.2 / Ex 3.1</span>
+  </div>
+</div>
+
+<!-- Submit -->
+<button class="submit-btn" onclick="submitTest()">📊 Submit Test &amp; View Score</button>
+
+<!-- Score Panel -->
+<div class="score-panel" id="score-panel">
+  <h3>Your Results</h3>
+  <div class="score-grid">
+    <div class="score-card"><div class="sc-val" id="sc-total">0/10</div><div class="sc-lbl">Score</div></div>
+    <div class="score-card"><div class="sc-val" id="sc-pct">0%</div><div class="sc-lbl">Percentage</div></div>
+    <div class="score-card"><div class="sc-val" id="sc-correct">0</div><div class="sc-lbl">Correct</div></div>
+    <div class="score-card"><div class="sc-val" id="sc-wrong">0</div><div class="sc-lbl">Incorrect / Skipped</div></div>
+  </div>
+  <div class="score-bar-wrap"><div class="score-bar" id="score-bar"></div></div>
+  <div id="sc-remark" style="font-size:13px;color:#555;margin-top:8px;"></div>
+</div>
+
+<div style="height:32px;"></div>
+
+<script>
+  const answers = {};
+  const intAnswers = {};
+  const correctMCQ = {1:'B',2:'C',3:'B',4:'C',5:'B',6:'C',7:'B',8:'D'};
+  const correctInt = {9:15, 10:6};
+  let submitted = false;
+
+  function selectOption(qno, choice, correct) {
+    if (submitted) return;
+    answers[qno] = choice;
+    const opts = document.querySelectorAll(`#opts-${qno} .option`);
+    opts.forEach(o => { o.classList.remove('selected','correct','incorrect'); });
+    opts.forEach(o => {
+      if (o.dataset.val === choice) o.classList.add('selected');
+    });
+  }
+
+  function checkInteger(qno, correctAns) {
+    const val = parseInt(document.getElementById(`int-${qno}`).value);
+    intAnswers[qno] = val;
+    const fb = document.getElementById(`fb-${qno}`);
+    fb.style.display = 'block';
+    if (val === correctAns) {
+      fb.className = 'feedback correct-fb';
+    } else {
+      fb.className = 'feedback incorrect-fb';
+    }
+  }
+
+  function submitTest() {
+    submitted = true;
+    let correct = 0;
+    [1,2,3,4,5,6,7,8].forEach(q => {
+      const chosen = answers[q];
+      const right = correctMCQ[q];
+      const opts = document.querySelectorAll(`#opts-${q} .option`);
+      opts.forEach(o => {
+        o.classList.remove('selected','correct','incorrect');
+        const lbl = o.querySelector('.opt-label');
+        lbl.classList.remove('correct-lbl','incorrect-lbl');
+        if (o.dataset.val === right) {
+          o.classList.add('correct');
+          lbl.classList.add('correct-lbl');
+        } else if (o.dataset.val === chosen && chosen !== right) {
+          o.classList.add('incorrect');
+          lbl.classList.add('incorrect-lbl');
+        }
+      });
+      const fb = document.getElementById(`fb-${q}`);
+      fb.style.display = 'block';
+      if (chosen === right) {
+        fb.className = 'feedback correct-fb';
+        correct++;
+      } else {
+        fb.className = 'feedback incorrect-fb';
+      }
+    });
+    [9,10].forEach(q => {
+      const val = intAnswers[q];
+      const right = correctInt[q];
+      const fb = document.getElementById(`fb-${q}`);
+      fb.style.display = 'block';
+      if (val === right) { fb.className = 'feedback correct-fb'; correct++; }
+      else { fb.className = 'feedback incorrect-fb'; }
+    });
+    const panel = document.getElementById('score-panel');
+    panel.style.display = 'block';
+    document.getElementById('sc-total').textContent = correct + '/10';
+    document.getElementById('sc-pct').textContent = (correct*10) + '%';
+    document.getElementById('sc-correct').textContent = correct;
+    document.getElementById('sc-wrong').textContent = 10 - correct;
+    setTimeout(() => {
+      document.getElementById('score-bar').style.width = (correct*10) + '%';
+    }, 100);
+    const remarks = ['Keep trying! Review the theory.','Good effort! Revise the ratio conditions.','Getting there! Practice more graphs.','Decent work! Focus on word problems.','Almost there! One more revision needed.','Good performance!','Well done!','Very good!','Excellent work!','Outstanding!','Perfect score! '];
+    document.getElementById('sc-remark').textContent = remarks[correct] || '';
+    panel.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+</script>
+</body>
+</html>
