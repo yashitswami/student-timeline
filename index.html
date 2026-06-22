@@ -22,6 +22,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      -webkit-tap-highlight-color: transparent; /* Clean iPad tap outline */
     }
 
     .analytics-container {
@@ -43,7 +44,7 @@
       position: relative;
       width: 100%;
       margin-top: 20px;
-      padding-bottom: 40px; /* Safe space to prevent date clipping */
+      padding-bottom: 40px;
     }
 
     .graph-canvas {
@@ -55,7 +56,6 @@
       box-sizing: border-box;
     }
 
-    /* Dynamic Guideline Infrastructure System */
     .guideline-x, .guideline-y {
       position: absolute;
       z-index: 1;
@@ -66,7 +66,6 @@
     .guideline-x { border-left: 1.5px dashed #9ca3af; bottom: 0; }
     .guideline-y { border-top: 1.5px dashed #9ca3af; left: 0; }
 
-    /* Absolute Plot Position Logic Fixes alignment issues from image_74b39e.png */
     .data-point-wrapper {
       position: absolute;
       bottom: var(--score-y);
@@ -90,11 +89,7 @@
       transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* Dynamic alignment styling for Quiz diamonds */
-    .shape-quiz { 
-      border-radius: 4px; 
-      transform: rotate(45deg);
-    }
+    .shape-quiz { border-radius: 4px; transform: rotate(45deg); }
 
     .hover-score-box {
       position: absolute;
@@ -117,7 +112,6 @@
     .hover-score-box .node-title { font-size: 0.85rem; font-weight: 700; color: #111827; margin-bottom: 4px; }
     .hover-score-box .node-score { font-size: 0.8rem; color: #4b5563; line-height: 1.4; }
 
-    /* Static Bottom Axis Containers preventing overlaps completely */
     .static-x-axis-labels {
       position: absolute;
       bottom: 0;
@@ -139,14 +133,27 @@
       transition: color 0.15s ease, font-size 0.15s ease;
     }
 
-    /* Interactive UI Focus States */
+    /* DESKTOP HOVER CLASS AND TOUCH ACTIVE CLASS INJECTION */
     .data-point-wrapper:hover { z-index: 100; }
-    .data-point-wrapper:hover .icon-node { transform: scale(1.25); background: var(--theme-color); }
-    .data-point-wrapper:hover .icon-node span { color: #ffffff !important; }
-    .data-point-wrapper:hover .hover-score-box { opacity: 1; visibility: visible; transform: translateY(-50%) translateX(0); }
     
-    .data-point-wrapper:hover + .guideline-x,
-    .data-point-wrapper:hover + .guideline-x + .guideline-y { opacity: 1; }
+    /* Using matching rules for hover OR active touch states */
+    .data-point-wrapper:hover .icon-node,
+    .data-point-wrapper.active-touch .icon-node { 
+      transform: scale(1.25); 
+      background: var(--theme-color); 
+    }
+    
+    .data-point-wrapper:hover .icon-node span,
+    .data-point-wrapper.active-touch .icon-node span { 
+      color: #ffffff !important; 
+    }
+    
+    .data-point-wrapper:hover .hover-score-box,
+    .data-point-wrapper.active-touch .hover-score-box { 
+      opacity: 1; 
+      visibility: visible; 
+      transform: translateY(-50%) translateX(0); 
+    }
 
     .y-axis-title {
       position: absolute;
@@ -179,12 +186,7 @@
 
     <div class="graph-wrapper">
       <div class="y-axis-title">Percentage Score</div>
-      
-      <div class="graph-canvas" id="canvas-container">
-        <!-- Main elements dynamically populating here -->
-      </div>
-      
-      <!-- Safe static layout block holding pristine date coordinates completely free from clashing layers -->
+      <div class="graph-canvas" id="canvas-container"></div>
       <div class="static-x-axis-labels" id="axis-labels-container"></div>
     </div>
 
@@ -211,13 +213,7 @@
     ];
 
     const timelineTimelineMap = {
-      "27 May": 10,
-      "02 Jun": 24,
-      "03 Jun": 38,
-      "11 Jun": 52,
-      "13 Jun": 66, 
-      "14 Jun": 80,
-      "17 Jun": 94
+      "27 May": 10, "02 Jun": 24, "03 Jun": 38, "11 Jun": 52, "13 Jun": 66, "14 Jun": 80, "17 Jun": 94
     };
 
     const canvas = document.getElementById('canvas-container');
@@ -227,7 +223,6 @@
     chandraChapterData.forEach((node) => {
       const xCoordPct = timelineTimelineMap[node.date]; 
       
-      // Node Wrapper element configuration
       const nodeWrapper = document.createElement('div');
       nodeWrapper.className = 'data-point-wrapper';
       nodeWrapper.id = `wrapper-${node.id}`;
@@ -237,9 +232,7 @@
       nodeWrapper.style.setProperty('--theme-color', node.colorVar);
 
       nodeWrapper.innerHTML = `
-        <div class="icon-node ${node.shapeClass}">
-          ${node.innerHtml}
-        </div>
+        <div class="icon-node ${node.shapeClass}">${node.innerHtml}</div>
         <div class="hover-score-box">
           <div style="font-size: 0.72rem; color: ${node.colorVar}; font-weight:700; text-transform:uppercase; margin-bottom:4px;">${node.type}</div>
           <div class="node-title">${node.label}</div>
@@ -247,23 +240,23 @@
         </div>
       `;
 
-      // Guideline elements structure 
       const guidelineX = document.createElement('div');
       guidelineX.className = 'guideline-x';
       guidelineX.style.left = `${xCoordPct}%`;
       guidelineX.style.height = `${node.scoreY}%`;
+      guidelineX.id = `guideline-x-${node.id}`;
 
       const guidelineY = document.createElement('div');
       guidelineY.className = 'guideline-y';
       guidelineY.style.bottom = `${node.scoreY}%`;
       guidelineY.style.left = '0';
       guidelineY.style.width = `${xCoordPct}%`;
+      guidelineY.id = `guideline-y-${node.id}`;
 
       canvas.appendChild(nodeWrapper);
       canvas.appendChild(guidelineX);
       canvas.appendChild(guidelineY);
 
-      // Unique date handling logic prevents double rendering labels completely
       if (!renderedDates.has(node.date)) {
         renderedDates.add(node.date);
         const dateTag = document.createElement('div');
@@ -274,21 +267,50 @@
         labelContainer.appendChild(dateTag);
       }
 
-      // Synchronized Hover Event Listeners to illuminate static base tags cleanly
-      nodeWrapper.addEventListener('mouseenter', () => {
+      // HELPER FUNCTIONS FOR SEAMLESS STATE TOGGLING
+      function activateNode() {
+        // Clear out other opened active layers first (crucial for clean iPad tapping)
+        document.querySelectorAll('.data-point-wrapper').forEach(w => w.classList.remove('active-touch'));
+        document.querySelectorAll('.guideline-x, .guideline-y').forEach(g => g.style.opacity = '0');
+        document.querySelectorAll('.static-date-label').forEach(l => { l.style.color = '#9ca3af'; l.style.fontSize = '0.75rem'; });
+
+        nodeWrapper.classList.add('active-touch');
+        guidelineX.style.opacity = '1';
+        guidelineY.style.opacity = '1';
         const activeLabel = document.getElementById(`date-label-${node.date.replace(' ', '-')}`);
-        if (activeLabel) {
-          activeLabel.style.color = node.colorVar;
-          activeLabel.style.fontSize = '0.85rem';
-        }
-      });
-      nodeWrapper.addEventListener('mouseleave', () => {
+        if (activeLabel) { activeLabel.style.color = node.colorVar; activeLabel.style.fontSize = '0.85rem'; }
+      }
+
+      function deactivateNode() {
+        nodeWrapper.classList.remove('active-touch');
+        guidelineX.style.opacity = '0';
+        guidelineY.style.opacity = '0';
         const activeLabel = document.getElementById(`date-label-${node.date.replace(' ', '-')}`);
-        if (activeLabel) {
-          activeLabel.style.color = '#9ca3af';
-          activeLabel.style.fontSize = '0.75rem';
+        if (activeLabel) { activeLabel.style.color = '#9ca3af'; activeLabel.style.fontSize = '0.75rem'; }
+      }
+
+      // MOUSE EVENTS (FOR DESKTOP PC)
+      nodeWrapper.addEventListener('mouseenter', activateNode);
+      nodeWrapper.addEventListener('mouseleave', deactivateNode);
+
+      // TOUCH EVENTS (FOR IPAD AND MOBILE ACCESSIBILITY)
+      nodeWrapper.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Stop iOS from simulating mouse event latency delay
+        if (nodeWrapper.classList.contains('active-touch')) {
+          deactivateNode();
+        } else {
+          activateNode();
         }
-      });
+      }, { passive: false });
+    });
+
+    // Tap canvas backdrop background to close cards instantly on iPad
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.target === canvas) {
+        document.querySelectorAll('.data-point-wrapper').forEach(w => w.classList.remove('active-touch'));
+        document.querySelectorAll('.guideline-x, .guideline-y').forEach(g => g.style.opacity = '0');
+        document.querySelectorAll('.static-date-label').forEach(l => { l.style.color = '#9ca3af'; l.style.fontSize = '0.75rem'; });
+      }
     });
   </script>
 </body>
