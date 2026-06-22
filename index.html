@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Chapter Analytics - Functions</title>
+  <title>Student Chapter Analytics - Chandra Prakash</title>
   <style>
     :root {
       --color-video: #d946ef;
@@ -48,7 +48,7 @@
       border-left: 2px solid var(--axis-color);
     }
 
-    /* Dynamic Guidelines overlay layers */
+    /* Dynamic Guideline Core System */
     .guideline-x, .guideline-y {
       position: absolute;
       z-index: 1;
@@ -81,26 +81,14 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
-    /* Shape shifts based on properties */
+    /* Rotated triangle structural configuration for quizzes */
     .shape-quiz { border-radius: 0; transform: rotate(45deg); }
-    .shape-module { border-radius: 4px; }
-    
-    /* Avoid rotating inside elements if wrapper shape changes */
     .shape-quiz > * { transform: rotate(-45deg); }
-
-    .camera-svg {
-      width: 60%;
-      height: 60%;
-      stroke: var(--theme-color);
-      stroke-width: 2;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
+    .shape-module { border-radius: 4px; }
 
     .hover-score-box {
       position: absolute;
-      width: 230px;
+      width: 240px;
       background: #ffffff;
       border: 1.5px solid #cbd5e1;
       border-radius: 8px;
@@ -117,7 +105,7 @@
     }
 
     .hover-score-box .node-title { font-size: 0.85rem; font-weight: 700; color: #111827; margin-bottom: 4px; }
-    .hover-score-box .node-score { font-size: 0.8rem; color: #4b5563; }
+    .hover-score-box .node-score { font-size: 0.8rem; color: #4b5563; line-height: 1.4; }
 
     .axis-date-tag {
       position: absolute;
@@ -132,10 +120,9 @@
       pointer-events: none;
     }
 
-    /* Master hover state triggers */
+    /* Interactive triggers */
     .data-point-wrapper:hover { z-index: 100; }
     .data-point-wrapper:hover .icon-node { transform: scale(1.2); background: var(--theme-color); }
-    .data-point-wrapper:hover .camera-svg { stroke: #ffffff; }
     .data-point-wrapper:hover .icon-node span { color: #ffffff !important; }
     .data-point-wrapper:hover .hover-score-box { opacity: 1; visibility: visible; transform: translateY(-50%) translateX(0); }
     
@@ -159,18 +146,17 @@
     .legend-flex { display: flex; gap: 32px; flex-wrap: wrap; }
     .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #374151; font-weight: 500; }
 
-    .sym-video { width: 16px; height: 16px; stroke: var(--color-video); stroke-width: 2; fill: none; }
     .sym-quiz { width: 10px; height: 10px; border: 2px solid var(--color-quiz); transform: rotate(45deg); }
-    .sym-module { width: 10px; height: 10px; border: 2px solid var(--color-module); border-radius: 2px; }
     .sym-cct { width: 10px; height: 10px; border: 2px solid var(--color-cct); border-radius: 50%; }
+    .sym-ct { width: 10px; height: 10px; border: 2px solid var(--color-ct); border-radius: 50%; background: var(--color-ct); }
   </style>
 </head>
 <body>
 
   <div class="analytics-container">
     <div class="header-block">
-      <h2>Chapter Performance Journey Map &bull; Functions</h2>
-      <p>Student Performance Footprint Matrix &bull; <strong id="student-name-display">Advaith V</strong></p>
+      <h2>Chapter Performance Journey Map &bull; Units and Measurements</h2>
+      <p>Student Performance Footprint Matrix &bull; <strong>Chandra Prakash Suthar</strong></p>
     </div>
 
     <div style="position: relative; width: 100%;">
@@ -182,49 +168,45 @@
     <div class="chapter-elements-legend">
       <div class="legend-title">Various Elements of a Chapter</div>
       <div class="legend-flex">
-        <div class="legend-item">
-          <svg class="sym-video" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-          Video
-        </div>
         <div class="legend-item"><span class="sym-quiz"></span> Quiz</div>
-        <div class="legend-item"><span class="sym-module"></span> Module</div>
         <div class="legend-item"><span class="sym-cct"></span> CCT</div>
+        <div class="legend-item"><span class="sym-ct"></span> CT (Chapter Test)</div>
       </div>
     </div>
   </div>
 
   <script>
-    // Parsed Student Submission array extracted directly from Functions.csv
-    const functionChapterData = [
-      { date: "14 Apr", label: "Module - Functions", type: "module", scoreY: 15, size: 24, scoreText: "Status: FINISHED / Opened", colorVar: "var(--color-module)", shapeClass: "shape-module", innerHtml: "" },
-      { date: "22 Apr", label: "In-Class Quiz - Functions", type: "quiz", scoreY: 75, size: 30, scoreText: "Score: 18/24 (75%)", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "<span></span>" },
-      { date: "25 Apr", label: "CCT 01: Domain & Basic Types", type: "cct", scoreY: 100, size: 38, scoreText: "Score: 21/21 (100%)", colorVar: "var(--color-cct)", shapeClass: "", innerHtml: "<span style='color: var(--color-cct); font-weight: bold;'>○</span>" },
-      { date: "25 Apr", label: "CCT 02: Modulus & Signum", type: "cct", scoreY: 100, size: 38, scoreText: "Score: 6/6 (100%)", colorVar: "var(--color-cct)", shapeClass: "", innerHtml: "<span style='color: var(--color-cct); font-weight: bold;'>○</span>" },
-      { date: "03 Jun", label: "CCT 03: GIF, Exp & Logarithms", type: "cct", scoreY: 100, size: 38, scoreText: "Score: 12/12 (100%)", colorVar: "var(--color-cct)", shapeClass: "", innerHtml: "<span style='color: var(--color-cct); font-weight: bold;'>○</span>" },
-      { date: "03 Jun", label: "CCT 04: Range & Algebra", type: "cct", scoreY: 100, size: 38, scoreText: "Score: 19/19 (100%)", colorVar: "var(--color-cct)", shapeClass: "", innerHtml: "<span style='color: var(--color-cct); font-weight: bold;'>○</span>" },
-      { 
-        date: "06 Jun", 
-        label: "Vid: Exponential & Logarithms", 
-        type: "video", 
-        scoreY: 20, 
-        size: 24, 
-        scoreText: "Engagement Tracked", 
-        colorVar: "var(--color-video)", 
-        shapeClass: "", 
-        innerHtml: `<svg class="camera-svg" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>` 
-      }
+    // Exact structural chronological history decoded from Chandra Prakash's PDF report
+    const chandraChapterData = [
+      { date: "27 May", label: "Live Quiz Sessions 1 & 2", type: "quiz", scoreY: 68, size: 30, scoreText: "Session 1: 5/6 (83%)<br>Session 2: 4/8 (50%)", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "<span></span>" },
+      { date: "02 Jun", label: "Live Quiz Sessions 4 & 5", type: "quiz", scoreY: 78, size: 32, scoreText: "Session 4: 4/4 (100%)<br>Session 5: 3/5 (60%)", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "<span></span>" },
+      { date: "03 Jun", label: "Units Video End Quiz", type: "quiz", scoreY: 8.3, size: 24, scoreText: "Score: 4.00/48.00 (8.3%)<br>Status: Consumed", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "<span></span>" },
+      { date: "11 Jun", label: "Live Quiz Sessions 6 & 7", type: "quiz", scoreY: 50, size: 28, scoreText: "Session 6: 1/2 (50%)<br>Session 7: 0/0", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "<span></span>" },
+      { date: "13 Jun", label: "CCT 01: Units & Dimensions", type: "cct", scoreY: 15.3, size: 24, scoreText: "Score: 2.00/13.00 (15.3%)<br>Status: Evaluation Complete", colorVar: "var(--color-cct)", shapeClass: "", innerHtml: "<span style='color: var(--color-cct); font-weight: bold;'>○</span>" },
+      { date: "13 Jun", label: "CCT 02: Significant Figures", type: "cct", scoreY: 33.3, size: 26, scoreText: "Score: 3.00/9.00 (33.3%)<br>Status: Evaluation Complete", colorVar: "var(--color-cct)", shapeClass: "", innerHtml: "<span style='color: var(--color-cct); font-weight: bold;'>○</span>" },
+      { date: "14 Jun", label: "Live Quiz Session 8", type: "quiz", scoreY: 50, size: 28, scoreText: "Score: 1/2 (50%)<br>Status: Evaluated", colorVar: "var(--color-quiz)", shapeClass: "shape-quiz", innerHtml: "<span></span>" },
+      { date: "17 Jun", label: "Chapter Milestone Evaluations", type: "ct", scoreY: 5.1, size: 24, scoreText: "Level 1 Test: 3/58 (5.1%)<br>Level 2 Test: -3/24 (Negative)", colorVar: "var(--color-ct)", shapeClass: "", innerHtml: "<span style='color: #fff; font-size: 0.8rem; line-height:0;'>●</span>" }
     ];
+
+    // Perfect structural alignment configuration maps identical dates to identical track vertical lines
+    const timelineTimelineMap = {
+      "27 May": 10,
+      "02 Jun": 24,
+      "03 Jun": 38,
+      "11 Jun": 52,
+      "13 Jun": 66, // Maps CCT 01 and CCT 02 perfectly to the exact same vertical gridline
+      "14 Jun": 80,
+      "17 Jun": 94
+    };
 
     const canvas = document.getElementById('canvas-container');
 
-    // Chronologically spaces the 7 elements out nicely across the horizontal container canvas width (10% to 90%)
-    functionChapterData.forEach((node, index) => {
-      const stepPct = 12 + (index * 12.5); 
+    chandraChapterData.forEach((node) => {
+      const xCoordPct = timelineTimelineMap[node.date]; 
       
-      // Create HTML node block elements dynamically
       const nodeWrapper = document.createElement('div');
       nodeWrapper.className = 'data-point-wrapper';
-      nodeWrapper.style.setProperty('--date-x', `${stepPct}%`);
+      nodeWrapper.style.setProperty('--date-x', `${xCoordPct}%`);
       nodeWrapper.style.setProperty('--score-y', `${node.scoreY}%`);
       nodeWrapper.style.setProperty('--node-size', `${node.size}px`);
       nodeWrapper.style.setProperty('--theme-color', node.colorVar);
@@ -235,7 +217,7 @@
         </div>
         <div class="axis-date-tag">${node.date}</div>
         <div class="hover-score-box">
-          <div style="font-size: 0.72rem; color: ${node.colorVar}; font-weight:700; text-transform:uppercase; margin-bottom:2px;">${node.type}</div>
+          <div style="font-size: 0.72rem; color: ${node.colorVar}; font-weight:700; text-transform:uppercase; margin-bottom:4px;">${node.type}</div>
           <div class="node-title">${node.label}</div>
           <div class="node-score">${node.scoreText}</div>
         </div>
@@ -243,16 +225,15 @@
 
       const guidelineX = document.createElement('div');
       guidelineX.className = 'guideline-x';
-      guidelineX.style.left = `${stepPct}%`;
+      guidelineX.style.left = `${xCoordPct}%`;
       guidelineX.style.height = `${node.scoreY}%`;
 
       const guidelineY = document.createElement('div');
       guidelineY.className = 'guideline-y';
       guidelineY.style.bottom = `${node.scoreY}%`;
       guidelineY.style.left = '0';
-      guidelineY.style.width = `${stepPct}%`;
+      guidelineY.style.width = `${xCoordPct}%`;
 
-      // Mount elements safely into the DOM
       canvas.appendChild(nodeWrapper);
       canvas.appendChild(guidelineX);
       canvas.appendChild(guidelineY);
